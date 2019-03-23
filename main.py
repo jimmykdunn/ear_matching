@@ -11,7 +11,7 @@ import earImage
 
 # Global parameters
 DATA_PATH = "data" # folder, relative to run location, where data is stored
-DONUT = False # true to read in images with the ear "donut", false to read in images without it
+DONUT = True # true to read in images with the ear "donut", false to read in images without it
 
 # Reads every image
 def readImages():
@@ -49,13 +49,13 @@ def readImages():
         
         # TO MAKE TESTING QUICKER. REMOVE FOR FINAL RUNS.
         # Stop after reading in the first 40 for testing more quickly
-        if len(secondSet) >= 24:
+        if len(secondSet) >= 16:
             break
     
     return firstSet, secondSet
 
 
-# Calculates the similarity between each pair of images
+# Calculates the similarity between each pair of images and places into a matrix.
 def calculateSimilarity(firstSet, secondSet):
     # Pairwise image similarity measure in an NxN matrix
     similarityMatrix = np.zeros([len(firstSet),len(secondSet)])
@@ -64,7 +64,7 @@ def calculateSimilarity(firstSet, secondSet):
     for i1, image in enumerate(firstSet):
         print("Calculating similarities for image ", i1)
         for i2, image2 in enumerate(secondSet):
-            score = image.compare(image2)
+            score = image.compare(image2) # function that actually does the comparison
             similarityMatrix[i1,i2] = score
     
     return similarityMatrix
@@ -88,7 +88,7 @@ def calculateAccuracy(similarityMatrix, firstSet, secondSet):
     isCorrect = [a == b for a,b in zip(trueId, peakId)]
     accuracy = np.mean(isCorrect)
     
-    return accuracy, isCorrect
+    return accuracy, isCorrect, peakId
   
     
 # Calculate rank of the true match ear images
@@ -111,9 +111,37 @@ def calculateRankOfTrueMatch(similarityMatrix, firstSet, secondSet):
         
     return rankOfTruth
 
+
+# Put a colored border onto the image (BGR color order assumed)
+def giveBorder(image, color, npix=3):
+    c3 = [0,0,0]
+    if color == 'red':
+        c3 = [0,0,255]
+    elif color == 'green':
+        c3 = [0,255,0]
+    else:
+        print("Inavlid color: ", color)
+        return image
+    
+    # Add the colored border
+    image[0:npix,:,0] = c3[0]
+    image[0:npix,:,1] = c3[1]
+    image[0:npix,:,2] = c3[2]
+    image[:,0:npix,0] = c3[0]
+    image[:,0:npix,1] = c3[1]
+    image[:,0:npix,2] = c3[2]
+    image[-npix:,:,0] = c3[0]
+    image[-npix:,:,1] = c3[1]
+    image[-npix:,:,2] = c3[2]
+    image[:,-npix:,0] = c3[0]
+    image[:,-npix:,1] = c3[1]
+    image[:,-npix:,2] = c3[2]
+    
+    return image
+
 # Displays results in a useful way
 def displayResults(accuracy, isCorrect, similarityMatrix, 
-                   firstSet, secondSet, rankOfTruth):         
+                   firstSet, secondSet, rankOfTruth, peakIds):         
     print("=========================") # dividing line
     if DONUT:
         print("Performance for images WITH donut-device")
@@ -134,6 +162,32 @@ def displayResults(accuracy, isCorrect, similarityMatrix,
     # is 2, etc...
     print("AVG RANK OF TRUE MATCH: ", np.mean(rankOfTruth))
     
+    # Display an strip of thumbnails with each ear in the first set next
+    # to the ear that the algorithm calculated as the best match.
+    thumbstrip = []
+    i = 0
+    for image1,peakId in zip(firstSet,peakIds):
+        thumb1 = cv2.resize(image1.rawImage, (int(image1.nx/10), int(image1.ny/10)))
+        for image2 in secondSet:
+            if image2.number == peakId:
+                thumb2 = cv2.resize(image2.rawImage, (int(image1.nx/10), int(image1.ny/10)))
+
+        thumbpair = np.concatenate((thumb1,thumb2), axis=0)
+        
+        # Green box if correct, red box if incorrect
+        if isCorrect[i]:
+            thumbpair = giveBorder(thumbpair, 'green')
+        else:
+            thumbpair = giveBorder(thumbpair, 'red')
+            
+        # Tack on the thumbpair to the final display image
+        if i ==0:
+            thumbstrip = thumbpair
+        else:
+            thumbstrip = np.concatenate((thumbstrip,thumbpair), axis=1)
+        i += 1
+    plt.imshow(cv2.cvtColor(thumbstrip, cv2.COLOR_BGR2RGB), extent=[0.5,len(peakIds)+0.5,2,0])
+    plt.title("First set images (top) with their best matches in 2nd set (bottom)")
 
 # Main function
 def main():
@@ -151,14 +205,15 @@ def main():
     #cv2.destroyWindow("Similarity matrix")
     
     # Calculate accuracy using the similarity matrix peak (off-diagonal)
-    accuracy, isCorrect = calculateAccuracy(similarityMatrix, firstSet, secondSet)
+    accuracy, isCorrect, peakId = \
+        calculateAccuracy(similarityMatrix, firstSet, secondSet)
     
     # Calculate rank of the true matched ears
     rankOfTruth = calculateRankOfTrueMatch(similarityMatrix, firstSet, secondSet)
     
     # Displays results
     displayResults(accuracy, isCorrect, similarityMatrix, 
-                   firstSet, secondSet, rankOfTruth)
+                   firstSet, secondSet, rankOfTruth, peakId)
     
     # Return similarity matrix and images
     return accuracy, similarityMatrix, isCorrect, rankOfTruth
