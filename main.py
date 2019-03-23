@@ -11,7 +11,7 @@ import earImage
 
 # Global parameters
 DATA_PATH = "data" # folder, relative to run location, where data is stored
-DONUT = True # true to read in images with the ear "donut", false to read in images without it
+DONUT = False # true to read in images with the ear "donut", false to read in images without it
 
 # Reads every image
 def readImages():
@@ -90,9 +90,30 @@ def calculateAccuracy(similarityMatrix, firstSet, secondSet):
     
     return accuracy, isCorrect
   
+    
+# Calculate rank of the true match ear images
+def calculateRankOfTrueMatch(similarityMatrix, firstSet, secondSet):
+    rankOfTruth = []
+    for i,row in enumerate(similarityMatrix):
+        trueId = firstSet[i].number
+        compIds = []
+        for j,item in enumerate(row):
+            compIds.append(secondSet[j].number)
+            
+        sortedStuff = sorted((e,i) for i,e in zip(compIds,row))
+        sortedStuff.reverse()
+        
+        # Rank of the true match is the index of sortedstuff where the compID,
+        # i.e. the 2nd entry of sortedstuff, is equal to the trueID
+        for i,sp in enumerate(sortedStuff):
+            if sp[1] == trueId:
+                rankOfTruth.append(i+1) # add 1 so that 1 is "perfect"
+        
+    return rankOfTruth
 
 # Displays results in a useful way
-def displayResults(accuracy, isCorrect, similarityMatrix, firstSet, secondSet):         
+def displayResults(accuracy, isCorrect, similarityMatrix, 
+                   firstSet, secondSet, rankOfTruth):         
     print("=========================") # dividing line
     if DONUT:
         print("Performance for images WITH donut-device")
@@ -106,6 +127,12 @@ def displayResults(accuracy, isCorrect, similarityMatrix, firstSet, secondSet):
         simOfBest.append(np.amax(row))
     print("AVG SIMILARITY SCORE OF BEST MATCH: ", np.mean(simOfBest))
    
+    # Rank of true match is a way of seeing how well the "true-match" ear
+    # did in comparison to the others. If the true-match ear was correctly
+    # chosen, then the rank of the true match is 1. If the true-match ear was
+    # the 2nd best match among all the images, then the rank of the true match
+    # is 2, etc...
+    print("AVG RANK OF TRUE MATCH: ", np.mean(rankOfTruth))
     
 
 # Main function
@@ -126,12 +153,16 @@ def main():
     # Calculate accuracy using the similarity matrix peak (off-diagonal)
     accuracy, isCorrect = calculateAccuracy(similarityMatrix, firstSet, secondSet)
     
+    # Calculate rank of the true matched ears
+    rankOfTruth = calculateRankOfTrueMatch(similarityMatrix, firstSet, secondSet)
+    
     # Displays results
-    displayResults(accuracy, isCorrect, similarityMatrix, firstSet, secondSet)
+    displayResults(accuracy, isCorrect, similarityMatrix, 
+                   firstSet, secondSet, rankOfTruth)
     
     # Return similarity matrix and images
-    return accuracy, similarityMatrix, isCorrect
+    return accuracy, similarityMatrix, isCorrect, rankOfTruth
 
 
 # Actually execute the program
-accuracy, similarityMatrix, isCorrect = main()
+accuracy, similarityMatrix, isCorrect, rankOfTruth = main()
