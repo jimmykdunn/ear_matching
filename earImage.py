@@ -6,13 +6,17 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 
+# Parameters
+SHRINK_FACTOR = 4 # shrink images by this factor before doing anything. Set to 1 to do no shrinking.
+DISPLAY_SHAPE = (504,672)  # Display images at this size. (504,672) is 1/6 raw image size
+
+
 # Image type enumeration
 FIRST = 0  # no donut, first image (no extension)
 SECOND = 1 # no donut, 2nd image ('t' extension)
 DONUT1 = 2 # donut, first image ('d' extension)
 DONUT2 = 3 # donut, 2nd image ('dt' extension)
 
-DISPLAY_SHAPE = (504,672)  # 1/6 raw image size
 
 # Class for holding an ear image
 class earImage:
@@ -30,12 +34,16 @@ class earImage:
         if self.typeStr == 'dt':
             self.type = DONUT2
         
-        # Read the image
+        # Read the image and shrink if desired
         self.rawImage = cv2.imread(file)
+        if not SHRINK_FACTOR == 1:
+            self.rawImage = cv2.resize(self.rawImage, 
+                (int(self.rawImage.shape[0]/SHRINK_FACTOR),
+                int(self.rawImage.shape[1]/SHRINK_FACTOR)))
         self.nx, self.ny, self.ncolors = self.rawImage.shape
         
         # Processed versions
-        self.rgbImage = cv2.cvtColor(self.rawImage, cv2.COLOR_BGR2RGB)
+        #self.rgbImage = cv2.cvtColor(self.rawImage, cv2.COLOR_BGR2RGB)
         self.scaled = []
         self.aligned = []
         self.backgroundRemoved = []
