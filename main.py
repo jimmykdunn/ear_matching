@@ -64,7 +64,8 @@ def main():
     similarityMatrix = calculateSimilarity(images)
     
     # Display the similarity matrix as an image
-    cv2.imshow("Similarity matrix", cv2.resize(similarityMatrix, (400,400)))
+    cv2.imshow("Similarity matrix", 
+               cv2.resize(similarityMatrix**2, (400,400),interpolation=cv2.INTER_NEAREST))
     cv2.waitKey(0)
     cv2.destroyWindow("Similarity matrix")
     
