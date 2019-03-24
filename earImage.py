@@ -1,10 +1,16 @@
 #!/usr/bin/python
 # Dharmit Dalvi and James Dunn, Spring 2019, Boston University
 # Code written for CS 640 (Artificial Intelligence) project.
+
+# External library imports
 import cv2
 import numpy as np
 import os
 import matplotlib.pyplot as plt
+
+# Internal imports
+import compare_sumsqdiff
+import preprocess
 
 # Parameters
 SHRINK_FACTOR = 4 # shrink images by this factor before doing anything. Set to 1 to do no shrinking.
@@ -55,16 +61,19 @@ class earImage:
         cv2.waitKey(time)
         cv2.destroyWindow(self.nameString)
         
+    # Scale the image. May want to input something other than the raw image
     def scale(self):
-        pass
+        return preprocess.scale(self.rawImage)
     
+    # Align the image. May want to input something other than the raw image
     def align(self):
-        pass
+        return preprocess.align(self.rawImage)
     
+    # Remove (zero out) background. May want to input something other than the raw image
     def removeBackground(self):
-        pass
+        return preprocess.align(self.rawImage)
     
-    # Run preprocessing on the ear image
+    # Run preprocessing suite on the ear image
     def preprocess(self):
         self.removeBackground()
         self.align()
@@ -72,13 +81,23 @@ class earImage:
     
     # Compare this image to another image, get a score for it
     def compare(self, other):
-        # This function runs a (yet to be determined) algorithm to compare
-        # the current image to another image (other)
+        # This function runs an algorithm to compare the current ear image to
+        # another ear image (other).
         
-        # Super basic pixel-by-pixel sum-squared difference. Standin for
-        # real algorithms.
-        score = 1.0 / (1.0 + np.mean( \
-                (self.rawImage/np.mean(self.rawImage) - \
-                 other.rawImage/np.mean(other.rawImage))**2))
+        # Call the external image comparison algorithm.
+        # These functions are the real meat of the project.
+        # ONLY ONE should be used, the rest should be commented out.
+        
+        # Option 1: simple pixel-by-pixel sum squared difference comparison
+        score = compare_sumsqdiff.compare(self.rawImage, other.rawImage)
+        
+        # Option 2: correlation with shifts?
+        
+        # Option 3: PCA/SVD decomposition?
+        
+        # Option 4: SIFT?
+        
+        # Option 5: Edge detection?
+        
         return score
 

@@ -1,16 +1,19 @@
 #!/usr/bin/python
 # Dharmit Dalvi and James Dunn, Spring 2019, Boston University
 # Code written for CS 640 (Artificial Intelligence) project.
+
+# External library imports
 import cv2
 import numpy as np
 import glob
 import os
 import matplotlib.pyplot as plt
 
+# Internal imports
 import earImage
 
 # Global parameters
-DATA_PATH = "data" # folder, relative to run location, where data is stored
+DATA_PATH = "data" # folder, relative to run location, where imagery is stored
 DONUT = True # true to read in images with the ear "donut", false to read in images without it
 
 # Reads every image
@@ -198,24 +201,18 @@ def main():
     # Calculate the pairwise similarity between images
     similarityMatrix = calculateSimilarity(firstSet, secondSet)
     
-    # Display the similarity matrix as an image
-    #cv2.imshow("Similarity matrix", 
-    #           cv2.resize(similarityMatrix**2, (400,400),interpolation=cv2.INTER_NEAREST))
-    #cv2.waitKey(0)
-    #cv2.destroyWindow("Similarity matrix")
-    
     # Calculate accuracy using the similarity matrix peak (off-diagonal)
     accuracy, isCorrect, peakId = \
         calculateAccuracy(similarityMatrix, firstSet, secondSet)
     
-    # Calculate rank of the true matched ears
+    # Calculate similarity ranking of the true match ears in the 2nd set
     rankOfTruth = calculateRankOfTrueMatch(similarityMatrix, firstSet, secondSet)
     
     # Displays results
     displayResults(accuracy, isCorrect, similarityMatrix, 
                    firstSet, secondSet, rankOfTruth, peakId)
     
-    # Return similarity matrix and images
+    # Return useful results to the calling function
     return accuracy, similarityMatrix, isCorrect, rankOfTruth
 
 
