@@ -1,12 +1,15 @@
 #!/usr/bin/python
 # Dharmit Dalvi and James Dunn, Spring 2019, Boston University
 # Code written for CS 640 (Artificial Intelligence) project.
+
+# This file contains all PCA eigendecomposition functions.  It is essentially
+# a wrapper for the sklearn library's PCA capabilities.
+
 from sklearn.decomposition import PCA
 import numpy as np
-import cv2
 import matplotlib.pyplot as plt
 
-NUM_COMPONENTS = 40
+import parameters as p
 
 # Calculates the eigenears based on the input stack of ear images.
 def fit(images):
@@ -15,7 +18,7 @@ def fit(images):
     for image in images:
         baseImages.append(image.rawImage.ravel())
     
-    pca = PCA(n_components=NUM_COMPONENTS, whiten=True).fit(baseImages)
+    pca = PCA(n_components=p.NUM_COMPONENTS, whiten=True).fit(baseImages)
         
     
     pca.shape = images[0].rawImage.shape #tack on a shape parameter for later use

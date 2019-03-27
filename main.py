@@ -12,26 +12,20 @@ import matplotlib.pyplot as plt
 # Internal imports
 import earImage
 import pca
+import parameters as p
 
-# Global parameters
-DATA_PATH = "data" # folder, relative to run location, where imagery is stored
-DONUT = True # true to read in images with the ear "donut", false to read in images without it
-DO_PCA = True # set to true to do a PCA decomposition
-
-NUM_TO_READ = 195 #number of ears to read (use smaller numbers to make faster for debugging)
-THUMBSIZE = (63,84) # size of thumbnails for final display
 
 # Reads every image
 def readImages():
     # Loop over the images, reading them in
     firstSet = [] # all the images without a 't' in their title
     secondSet = [] # all the images with a 't' in their title
-    filelist = glob.glob(DATA_PATH + "/*jpg*")
+    filelist = glob.glob(p.DATA_PATH + "/*jpg*")
     print("Reading images from file")
     for file in filelist:
         # Skip images that do/don't have the "donut" device per the DONUT parameter
         itype = file.split(os.sep)[-1].split('.')[0].split('_')[-1]
-        if DONUT: # skip non-donut images
+        if p.DONUT: # skip non-donut images
             if not 'd' in itype:
                 continue
         else: # skip donut images
@@ -57,7 +51,7 @@ def readImages():
         
         # TO MAKE TESTING QUICKER. REMOVE FOR FINAL RUNS.
         # Stop after reading in the first 40 for testing more quickly
-        if len(secondSet) >= NUM_TO_READ:
+        if len(secondSet) >= p.NUM_TO_READ:
             break
     
     return firstSet, secondSet
@@ -84,7 +78,7 @@ def calculateAccuracy(similarityMatrix, firstSet, secondSet):
     peakId = []
     trueId = []
     for i,row in enumerate(similarityMatrix):
-        peakVal = np.amax(row)
+        #peakVal = np.amax(row)
         peakIndex = np.argmax(row)
         
         # Get the ID of the image being compared and the ID of the most-similar
@@ -151,7 +145,7 @@ def giveBorder(image, color, npix=3):
 def displayResults(accuracy, isCorrect, similarityMatrix, 
                    firstSet, secondSet, rankOfTruth, peakIds):         
     print("=========================") # dividing line
-    if DONUT:
+    if p.DONUT:
         print("Performance for images WITH donut-device")
     else:
         print("Performance for images \"in the wild\"")
@@ -175,10 +169,10 @@ def displayResults(accuracy, isCorrect, similarityMatrix,
     thumbstrip = []
     i = 0
     for image1,peakId in zip(firstSet,peakIds):
-        thumb1 = cv2.resize(image1.rawImage, THUMBSIZE)
+        thumb1 = cv2.resize(image1.rawImage, p.THUMBSIZE)
         for image2 in secondSet:
             if image2.number == peakId:
-                thumb2 = cv2.resize(image2.rawImage, THUMBSIZE)
+                thumb2 = cv2.resize(image2.rawImage, p.THUMBSIZE)
 
         thumbpair = np.concatenate((thumb1,thumb2), axis=0)
         
@@ -197,6 +191,7 @@ def displayResults(accuracy, isCorrect, similarityMatrix,
     plt.imshow(cv2.cvtColor(thumbstrip, cv2.COLOR_BGR2RGB), extent=[0.5,len(peakIds)+0.5,2,0])
     plt.title("First set images (top) with their best matches in 2nd set (bottom)")
 
+
 # Main function
 def main():
     
@@ -204,7 +199,7 @@ def main():
     firstSet, secondSet = readImages()
     
     # Generate an eigendecomposition for each image for use in similarity calculation
-    if DO_PCA:
+    if p.DO_PCA:
         print("Running PCA fit...")
         # Run PCA fitting
         skl_pca = pca.fit(firstSet)

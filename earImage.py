@@ -12,11 +12,7 @@ import matplotlib.pyplot as plt
 import compare_sumsqdiff
 import preprocess
 import pca
-
-# Parameters
-SHRINK_FACTOR = 16#4 # shrink images by this factor before doing anything. Set to 1 to do no shrinking.
-DISPLAY_SHAPE = (504,672)  # Display images at this size. (504,672) is 1/6 raw image size
-
+import parameters as p
 
 # Image type enumeration
 FIRST = 0  # no donut, first image (no extension)
@@ -43,10 +39,10 @@ class earImage:
         
         # Read the image and shrink if desired
         self.rawImage = cv2.imread(file)
-        if not SHRINK_FACTOR == 1:
+        if not p.SHRINK_FACTOR == 1:
             self.rawImage = cv2.resize(self.rawImage, 
-                (int(self.rawImage.shape[0]/SHRINK_FACTOR),
-                int(self.rawImage.shape[1]/SHRINK_FACTOR)))
+                (int(self.rawImage.shape[0]/p.SHRINK_FACTOR),
+                int(self.rawImage.shape[1]/p.SHRINK_FACTOR)))
         self.nx, self.ny, self.ncolors = self.rawImage.shape
         
         # Processed versions
@@ -56,7 +52,7 @@ class earImage:
         self.backgroundRemoved = []
             
         
-    def displayRawRGB(self, shape=DISPLAY_SHAPE, time=0):
+    def displayRawRGB(self, shape=p.DISPLAY_SHAPE, time=0):
         #plt.imshow(self.rgbImage)
         forDisplay = cv2.resize(self.rawImage, shape)
         cv2.imshow(self.nameString, forDisplay)
@@ -96,13 +92,16 @@ class earImage:
         # These functions are the real meat of the project.
         # ONLY ONE should be used, the rest should be commented out.
         
-        # Option 1: simple pixel-by-pixel sum squared difference comparison
-        #score = compare_sumsqdiff.compare(self.rawImage, other.rawImage)
+        if not p.DO_PCA:
+            # Option 1: simple pixel-by-pixel sum squared difference comparison
+            score = compare_sumsqdiff.compare(self.rawImage, other.rawImage)
+    
+        else:        
+            # Option 3: PCA/SVD decomposition?
+            score = compare_sumsqdiff.compare(self.eigenweights, other.eigenweights)
+        
         
         # Option 2: correlation with shifts?
-        
-        # Option 3: PCA/SVD decomposition?
-        score = compare_sumsqdiff.compare(self.eigenweights, other.eigenweights)
         
         # Option 4: SIFT?
         
