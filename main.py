@@ -11,10 +11,15 @@ import matplotlib.pyplot as plt
 
 # Internal imports
 import earImage
+import pca
 
 # Global parameters
 DATA_PATH = "data" # folder, relative to run location, where imagery is stored
 DONUT = True # true to read in images with the ear "donut", false to read in images without it
+DO_PCA = True # set to true to do a PCA decomposition
+
+NUM_TO_READ = 195 #number of ears to read (use smaller numbers to make faster for debugging)
+THUMBSIZE = (63,84) # size of thumbnails for final display
 
 # Reads every image
 def readImages():
@@ -52,14 +57,14 @@ def readImages():
         
         # TO MAKE TESTING QUICKER. REMOVE FOR FINAL RUNS.
         # Stop after reading in the first 40 for testing more quickly
-        if len(secondSet) >= 16:
+        if len(secondSet) >= NUM_TO_READ:
             break
     
     return firstSet, secondSet
 
 
 # Calculates the similarity between each pair of images and places into a matrix.
-def calculateSimilarity(firstSet, secondSet):
+def calculateSimilarityMatrix(firstSet, secondSet):
     # Pairwise image similarity measure in an NxN matrix
     similarityMatrix = np.zeros([len(firstSet),len(secondSet)])
         
@@ -170,10 +175,10 @@ def displayResults(accuracy, isCorrect, similarityMatrix,
     thumbstrip = []
     i = 0
     for image1,peakId in zip(firstSet,peakIds):
-        thumb1 = cv2.resize(image1.rawImage, (int(image1.nx/10), int(image1.ny/10)))
+        thumb1 = cv2.resize(image1.rawImage, THUMBSIZE)
         for image2 in secondSet:
             if image2.number == peakId:
-                thumb2 = cv2.resize(image2.rawImage, (int(image1.nx/10), int(image1.ny/10)))
+                thumb2 = cv2.resize(image2.rawImage, THUMBSIZE)
 
         thumbpair = np.concatenate((thumb1,thumb2), axis=0)
         
@@ -197,9 +202,25 @@ def main():
     
     # Read in all the images
     firstSet, secondSet = readImages()
+    
+    # Generate an eigendecomposition for each image for use in similarity calculation
+    if DO_PCA:
+        print("Running PCA fit...")
+        # Run PCA fitting
+        skl_pca = pca.fit(firstSet)
+        
+        # Display eigenbasis (for debugging)
+        #pca.displayEigenbasis(skl_pca)
+        
+        # Decompose all the images in each set
+        for i, (image1, image2) in enumerate(zip(firstSet,secondSet)):
+            print("Decomposing image ", i, " of ", len(firstSet))
+            image1.pcaDecomposition(skl_pca)
+            image2.pcaDecomposition(skl_pca)
+        
         
     # Calculate the pairwise similarity between images
-    similarityMatrix = calculateSimilarity(firstSet, secondSet)
+    similarityMatrix = calculateSimilarityMatrix(firstSet, secondSet)
     
     # Calculate accuracy using the similarity matrix peak (off-diagonal)
     accuracy, isCorrect, peakId = \

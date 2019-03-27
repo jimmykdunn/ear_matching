@@ -11,9 +11,10 @@ import matplotlib.pyplot as plt
 # Internal imports
 import compare_sumsqdiff
 import preprocess
+import pca
 
 # Parameters
-SHRINK_FACTOR = 4 # shrink images by this factor before doing anything. Set to 1 to do no shrinking.
+SHRINK_FACTOR = 16#4 # shrink images by this factor before doing anything. Set to 1 to do no shrinking.
 DISPLAY_SHAPE = (504,672)  # Display images at this size. (504,672) is 1/6 raw image size
 
 
@@ -53,6 +54,7 @@ class earImage:
         self.scaled = []
         self.aligned = []
         self.backgroundRemoved = []
+            
         
     def displayRawRGB(self, shape=DISPLAY_SHAPE, time=0):
         #plt.imshow(self.rgbImage)
@@ -78,6 +80,12 @@ class earImage:
         self.removeBackground()
         self.align()
         self.scale()
+        
+        
+    # Decompose into eigencomponents using already-fit PCA object
+    def pcaDecomposition(self, skl_pca):
+        self.eigenweights = pca.decompose(self.rawImage, skl_pca)
+        
     
     # Compare this image to another image, get a score for it
     def compare(self, other):
@@ -89,11 +97,12 @@ class earImage:
         # ONLY ONE should be used, the rest should be commented out.
         
         # Option 1: simple pixel-by-pixel sum squared difference comparison
-        score = compare_sumsqdiff.compare(self.rawImage, other.rawImage)
+        #score = compare_sumsqdiff.compare(self.rawImage, other.rawImage)
         
         # Option 2: correlation with shifts?
         
         # Option 3: PCA/SVD decomposition?
+        score = compare_sumsqdiff.compare(self.eigenweights, other.eigenweights)
         
         # Option 4: SIFT?
         
