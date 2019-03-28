@@ -13,6 +13,7 @@ import compare_sumsqdiff
 import preprocess
 import pca
 import parameters as p
+import edgeDetection
 
 # Image type enumeration
 FIRST = 0  # no donut, first image (no extension)
@@ -39,11 +40,19 @@ class earImage:
         
         # Read the image and shrink if desired
         self.rawImage = cv2.imread(file)
+        self.origImage = self.rawImage
         if not p.SHRINK_FACTOR == 1:
             self.rawImage = cv2.resize(self.rawImage, 
                 (int(self.rawImage.shape[0]/p.SHRINK_FACTOR),
                 int(self.rawImage.shape[1]/p.SHRINK_FACTOR)))
-        self.nx, self.ny, self.ncolors = self.rawImage.shape
+            
+        if p.BLACK_AND_WHITE:
+            self.rawImage = np.mean(self.rawImage, axis=2).astype(int)
+            self.nx, self.ny = self.rawImage.shape
+            self.ncolors = 1
+        else:
+            self.nx, self.ny, self.ncolors = self.rawImage.shape
+            
         
         # Processed versions
         #self.rgbImage = cv2.cvtColor(self.rawImage, cv2.COLOR_BGR2RGB)
@@ -82,6 +91,10 @@ class earImage:
     def pcaDecomposition(self, skl_pca):
         self.eigenweights = pca.decompose(self.rawImage, skl_pca)
         
+        
+    # Run edge detection
+    def detectEdges(self):
+        self.rawImage = edgeDetection.cannyEdges(self.rawImage, sigma=p.EDGE_SIGMA)
     
     # Compare this image to another image, get a score for it
     def compare(self, other):

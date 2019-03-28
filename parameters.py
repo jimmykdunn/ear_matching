@@ -15,14 +15,23 @@ DONUT = True
 # Shrink images by this factor before doing anything. Set to 1 to do no shrinking.
 SHRINK_FACTOR = 16
 
+# True to convert to black and white (required for edge detection)
+BLACK_AND_WHITE = False
+
 # Set to true to do a PCA decomposition before comparison
-DO_PCA = True 
+DO_PCA = False 
+
+# Do edge detection (True) or not (False)
+DO_EDGE_DETECTION = True
+
+# Canny edge detection sigma
+EDGE_SIGMA = 3
 
 # Number of eigencomponents to use in PCA decomposition
 NUM_COMPONENTS = 40
 
 # Number of ears to use (of 195) (use smaller numbers to make faster for debugging)
-NUM_TO_READ = 195
+NUM_TO_READ = 16
 
 # Size of thumbnails for final display (pixels)
 THUMBSIZE = (63,84)

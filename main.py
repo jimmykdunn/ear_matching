@@ -8,6 +8,7 @@ import numpy as np
 import glob
 import os
 import matplotlib.pyplot as plt
+import skimage.transform as skt
 
 # Internal imports
 import earImage
@@ -169,10 +170,14 @@ def displayResults(accuracy, isCorrect, similarityMatrix,
     thumbstrip = []
     i = 0
     for image1,peakId in zip(firstSet,peakIds):
-        thumb1 = cv2.resize(image1.rawImage, p.THUMBSIZE)
+        thumb1 = cv2.resize(image1.origImage, p.THUMBSIZE)
+        #thumb1 = skt.resize(image1.rawImage, p.THUMBSIZE)
+        #thumb1 = np.repeat(thumb1[:, :, np.newaxis], 3, axis=2)
         for image2 in secondSet:
             if image2.number == peakId:
-                thumb2 = cv2.resize(image2.rawImage, p.THUMBSIZE)
+                thumb2 = cv2.resize(image2.origImage, p.THUMBSIZE)
+                #thumb2 = skt.resize(image1.rawImage, p.THUMBSIZE)
+                #thumb2 = np.repeat(thumb2[:, :, np.newaxis], 3, axis=2)
 
         thumbpair = np.concatenate((thumb1,thumb2), axis=0)
         
@@ -197,6 +202,12 @@ def main():
     
     # Read in all the images
     firstSet, secondSet = readImages()
+    
+    if p.DO_EDGE_DETECTION:
+        for i, (image1, image2) in enumerate(zip(firstSet,secondSet)):
+            print("Running edge detection on image ", i, " of ", len(firstSet))
+            image1.detectEdges()
+            image2.detectEdges()
     
     # Generate an eigendecomposition for each image for use in similarity calculation
     if p.DO_PCA:
@@ -229,8 +240,8 @@ def main():
                    firstSet, secondSet, rankOfTruth, peakId)
     
     # Return useful results to the calling function
-    return accuracy, similarityMatrix, isCorrect, rankOfTruth
+    return accuracy, similarityMatrix, isCorrect, rankOfTruth, firstSet, secondSet
 
 
 # Actually execute the program
-accuracy, similarityMatrix, isCorrect, rankOfTruth = main()
+accuracy, similarityMatrix, isCorrect, rankOfTruth, firstSet, secondSet = main()
