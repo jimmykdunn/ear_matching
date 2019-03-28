@@ -40,18 +40,17 @@ class earImage:
         
         # Read the image and shrink if desired
         self.rawImage = cv2.imread(file)
-        self.origImage = self.rawImage
         if not p.SHRINK_FACTOR == 1:
             self.rawImage = cv2.resize(self.rawImage, 
                 (int(self.rawImage.shape[0]/p.SHRINK_FACTOR),
                 int(self.rawImage.shape[1]/p.SHRINK_FACTOR)))
             
         if p.BLACK_AND_WHITE:
-            self.rawImage = np.mean(self.rawImage, axis=2).astype(int)
-            self.nx, self.ny = self.rawImage.shape
-            self.ncolors = 1
-        else:
-            self.nx, self.ny, self.ncolors = self.rawImage.shape
+            self.rawImage = np.mean(self.rawImage, axis=2).astype(np.uint8)
+            self.rawImage = np.repeat(np.reshape(self.rawImage,
+                [self.rawImage.shape[0],self.rawImage.shape[1],1]), 3, axis=2)
+            
+        self.nx, self.ny, self.ncolors = self.rawImage.shape
             
         
         # Processed versions
@@ -94,7 +93,7 @@ class earImage:
         
     # Run edge detection
     def detectEdges(self):
-        self.rawImage = edgeDetection.cannyEdges(self.rawImage, sigma=p.EDGE_SIGMA)
+        self.rawImage = edgeDetection.cannyEdges(self.rawImage)
     
     # Compare this image to another image, get a score for it
     def compare(self, other):

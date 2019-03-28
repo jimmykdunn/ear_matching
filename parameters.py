@@ -24,14 +24,11 @@ DO_PCA = False
 # Do edge detection (True) or not (False)
 DO_EDGE_DETECTION = True
 
-# Canny edge detection sigma
-EDGE_SIGMA = 3
-
 # Number of eigencomponents to use in PCA decomposition
 NUM_COMPONENTS = 40
 
 # Number of ears to use (of 195) (use smaller numbers to make faster for debugging)
-NUM_TO_READ = 16
+NUM_TO_READ = 195
 
 # Size of thumbnails for final display (pixels)
 THUMBSIZE = (63,84)

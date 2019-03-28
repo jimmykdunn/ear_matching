@@ -170,14 +170,10 @@ def displayResults(accuracy, isCorrect, similarityMatrix,
     thumbstrip = []
     i = 0
     for image1,peakId in zip(firstSet,peakIds):
-        thumb1 = cv2.resize(image1.origImage, p.THUMBSIZE)
-        #thumb1 = skt.resize(image1.rawImage, p.THUMBSIZE)
-        #thumb1 = np.repeat(thumb1[:, :, np.newaxis], 3, axis=2)
+        thumb1 = cv2.resize(image1.rawImage, p.THUMBSIZE)
         for image2 in secondSet:
             if image2.number == peakId:
-                thumb2 = cv2.resize(image2.origImage, p.THUMBSIZE)
-                #thumb2 = skt.resize(image1.rawImage, p.THUMBSIZE)
-                #thumb2 = np.repeat(thumb2[:, :, np.newaxis], 3, axis=2)
+                thumb2 = cv2.resize(image2.rawImage, p.THUMBSIZE)
 
         thumbpair = np.concatenate((thumb1,thumb2), axis=0)
         
