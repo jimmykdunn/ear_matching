@@ -5,12 +5,12 @@ import numpy as np
 import cv2
 import parameters as p
 
-# Super basic pixel-by-pixel sum-squared difference. Standin for
-# real comparison algorithms.
+# Super basic pixel-by-pixel sum-squared difference.
 def compare(image1, image2):
     
     # Disallow any pixels that are exactly zero in either image from
-    # contributing to the score
+    # contributing to the score. Don't do this if we are comparing PCA
+    # vectors because they do not have zero pixels.
     if not p.DO_PCA:
         zeropixels1 = np.sum(image1,axis=2) == 0
         zeropixels2 = np.sum(image2,axis=2) == 0
@@ -27,6 +27,7 @@ def compare(image1, image2):
     #cv2.waitKey(0)
     #cv2.destroyWindow("nozeros")
     
+    # Sum squared difference, scaled to be between zero and one
     score = 1.0 / (1.0 + np.mean( \
         (image1c/np.mean(image1c) - \
          image2c/np.mean(image2c))**2))

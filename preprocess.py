@@ -1,6 +1,10 @@
 #!/usr/bin/python
 # Dharmit Dalvi and James Dunn, Spring 2019, Boston University
 # Code written for CS 640 (Artificial Intelligence) project.
+
+# Functions used in preprocessing imagery.
+
+# External imports
 import numpy as np
 import cv2
 import copy
@@ -8,11 +12,21 @@ import copy
 # Internal imports
 import edgeDetection
 
+# Parameters for ORB feature detection and alignment algorithm
+# (ORB algorithm is not used because it did not work on this data. 
+# See explanation below)
 MAX_FEATURES = 500
 GOOD_MATCH_PERCENT = 0.05 #0.15
 
 
-# Shifts and rotates the image
+# Uses a keypoint detection and matching method to determine the homography
+# between a pair of images, then uses that homography to align (register) them.
+# This method did NOT produce reasonable results in testing.  This is primarily
+# because the keypoint detection algorithm likes to pick strong edges in the
+# image, and the strongest edges in the image tend to be the sides of the
+# donut device. The donut device is not what we want to register to, so the
+# algorithm did not work well.  The attempt to remove them below only resulted
+# in very poorly warped images.
 # This function is based on:
 # https://www.learnopencv.com/image-alignment-feature-based-using-opencv-c-python/
 def alignViaORB(im1, im2):
@@ -95,8 +109,10 @@ def trimKeypoints(keypoints, descriptors, image):
     return newkeypoints, np.array(newdescriptors)
 
 
-# Scale the input image by the input fraction, cropping back to the original
-# size.
+# Scale the input image by scalex and scaley. 
+# scalex is a value near 1, where 1 represents no scaling, 0.9 would represent
+# a 10% squeeze, and 1.1 would represent a 10% stretch.
+# scaley is the same, just applied in the vertical direction.
 def scaleImage(image, scalex, scaley):
     ny,nx,nc = image.shape
     # Crop and expand
@@ -133,7 +149,14 @@ def scaleImage(image, scalex, scaley):
 
     return image
 
-# Align with warped template-matching method
+# Main function for template alignment routine. Detects the edges of the input
+# image, then compares that edgemap to a preconstructed template that has had
+# known shifts and rotations applied to it. The template that best matches the
+# edgemap represents the best estimate of the correct transformation to put
+# the ear in a consistent place and with a consistent rotation.
+# Once we find the best transformation, we simply apply its inverse to the 
+# original image, giving us an image that is nicely aligned to the untransformed
+# original template.
 def alignViaTemplate(image, templates):    
     ny,nx,nc = image.shape
     
@@ -174,22 +197,25 @@ def alignViaTemplate(image, templates):
     
     return image, R
 
-# Removes background that is not part of the ear
+# Removes background that is not part of the ear via removal of the donut
+# device and keeping pixels that are consistent with the color of human skin.
 def removeBackground(image):
     
-    # Remove donut if it is present
+    # Remove donut if it is present. This did not work well in testing and
+    # so we are not using it.
     #image = removeDonut(image)
     #cv2.imshow("DonutGone", image)
     #cv2.waitKey(0)
     #cv2.destroyWindow("DonutGone")
     
-    # Match skin color. DOES NOT WORK IF IMG IS ALREADY BLACK AND WHITE!!!
+    # Match skin color
     skinMask = skinDetect(image)
     skinMask = cleanMask(skinMask)
     #cv2.imshow("SkinMask", skinMask*255)
     #cv2.waitKey(0)
     #cv2.destroyWindow("SkinMask")
     
+    # Apply the mask
     image = cv2.bitwise_and(image,image,mask = skinMask)
     #cv2.imshow("SkinDetected", image)
     #cv2.waitKey(0)
@@ -219,7 +245,12 @@ def skinDetect(src):
     return dst.astype(np.uint8)
 
 
-# Cleans up the input mask
+# Cleans up the input mask. This is a multipart process:
+# 1. Force the outer edges of the image to be masked out since the ears are
+#    always at the center.
+# 2. Run a dilation followed by an erosion to the skin mask ("opening"). This
+#    connects areas of skin that are not quite touching, but should be. 
+#    Effectively removes noise in the skin masking process.
 def cleanMask(mask):
     ny,nx = mask.shape
     x = np.arange(nx)-nx/2
@@ -229,7 +260,7 @@ def cleanMask(mask):
     distFromCenter2 = x*x + y*y
     
     # Remove the inner piece of the mask - this usually forces the ear canal
-    # entrance to remain unmasked.
+    # entrance to remain unmasked. Did not work well in testing, not used.
     #innerRadiusFrac = 0.5
     #centerMask = distFromCenter2 < ((nx+ny)/4*innerRadiusFrac)**2
     #mask = ((mask + centerMask) > 0).astype(np.uint8)
@@ -250,7 +281,7 @@ def cleanMask(mask):
     return mask
 
 # Removes the "donut" around the ear that is present in some of the image
-# by color and/or position
+# by color and/or position. Did not work well in testing, not using it.
 def removeDonut(image):
     # Donut color is around (B,G,R) = (230,230,230)
     donutMinBGR = [210,210,210]

@@ -2,18 +2,36 @@
 # Dharmit Dalvi and James Dunn, Spring 2019, Boston University
 # Code written for CS 640 (Artificial Intelligence) project.
 
-# Very simple code to take in the mean edge image and draw a template from it
+# The "template" method is an attempt to implement a technique that is common 
+# in the literature, namely taking the image and matching it to a known 
+# template, to be used for registration. The same method is also commonly used 
+# for matching pairs of ears, but that is beyond the scope of this project.
+
+# A 'template" for our purposes is a binary mask that looks somewhat like a
+# dilated edgemap of an ear photograph. To do registration, we take a set
+# of templates that have known x shifts, y shifts, and rotation applied to
+# them. Then we simple correlate the edgemap of an ear image with each of the
+# templates.  The template which best matches the edgemap of the ear image is
+# the most likely to represent the correct transformation.  We then take
+# that transformation and apply its inverse to the image, resulting in an 
+# image that is well aligned to the unperturbed original template.
+# 
+# The template class holds a single template that is a copy of the input 
+# template with a known shift and rotation applied.
+
+# External imports
 import cv2
 import numpy as np
 import parameters as p
 
+# Internal imports
 import preprocess
 
 
-# Class for holding mask templates for alignment
+# Class for holding binary mask ear outline templates
 class template:
     def __init__(self,base):
-        self.mask = base
+        self.mask = base # holds the template image
         self.ny, self.nx, self.nc = self.mask.shape
         self.xs  = -9999
         self.ys  = -9999
@@ -22,8 +40,7 @@ class template:
         self.stretchy = -9999
         self.name = ""
     
-    # Applies the specified warp
-    #def applyWarp(self, xs, ys, rot, stretchx, stretchy):
+    # Applies the specified warp to the unperturbed base template
     def applyWarp(self, xs, ys, rot, stretchx, stretchy):
         self.xs  = xs
         self.ys  = ys
@@ -50,7 +67,9 @@ class template:
         return matchStrength
 
 
-# Perturb the template in an array of ways
+# Take the "base template" from an image file and apply a series of 
+# transformations (warps, homographies) to it.  This gives an array of 
+# templates to compare each input image to.
 def makeTemplates():
     templateBase = cv2.imread(p.TEMPLATE_IMAGE)
     
@@ -59,6 +78,9 @@ def makeTemplates():
               (int(templateBase.shape[1]*8/p.SHRINK_FACTOR),
                int(templateBase.shape[0]*8/p.SHRINK_FACTOR))) 
     ny,nx,nc = templateBase.shape
+    
+    # These are the shift, rotation, and stretch parameters that will be 
+    # represented in the template list
     xshifts   = (np.arange(10)-5)/5 * nx*0.1 #0.05
     yshifts   = (np.arange(10)-5)/5 * ny*0.1 #0.05
     rotations = (np.arange(10)-5) * 3 + 3
@@ -73,6 +95,7 @@ def makeTemplates():
     xshifts = xshifts.astype(int)
     yshifts = yshifts.astype(int)
     
+    # Generate all the templates
     templates = []
     for strx in stretchx:
         for stry in stretchy:
@@ -91,7 +114,9 @@ def makeTemplates():
     return templates
 
 
-# Generate initial template (did some minor editing in MS paint after this)
+# This code generates a template from a stack of edge images, although
+# realistically some hand-adjustment of the template in a program like MS
+# paint is needed.
 def makeTemplateFromMeanstack():
     meanstack = cv2.imread("meanStackDonut8x.jpg")
     

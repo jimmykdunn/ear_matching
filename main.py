@@ -2,6 +2,8 @@
 # Dharmit Dalvi and James Dunn, Spring 2019, Boston University
 # Code written for CS 640 (Artificial Intelligence) project.
 
+# main() is the highest level function. Call this from your python environment.
+
 # External library imports
 import cv2
 import numpy as np
@@ -16,7 +18,10 @@ import parameters as p
 import template
 
 
-# Reads every image
+# Reads every image and applies preprocessing. Images are split into two sets:
+# the set with a "t" in the filename, and the set without a "t" in the
+# filename.  The images in the "no t" set are then compared only with the 
+# images in the "t" set.
 def readImages():
     # Generate template set once ahead of time
     print("Generating alignment templates from " + p.TEMPLATE_IMAGE)
@@ -58,8 +63,8 @@ def readImages():
         
         print("Successfully read image: ", image.nameString)
         
-        # TO MAKE TESTING QUICKER. REMOVE FOR FINAL RUNS.
-        # Stop after reading in the first 40 for testing more quickly
+        # TO MAKE TESTING QUICKER, just read in the first NUM_TO_READ images
+        # Stop after reading in the first N for testing more quickly
         if len(secondSet) >= p.NUM_TO_READ:
             break
         
@@ -203,7 +208,7 @@ def displayResults(accuracy, isCorrect, similarityMatrix,
     plt.title("First set images (top) with their best matches in 2nd set (bottom)")
 
 
-# Main function
+# Main function. Call this to run everything!!!
 def main():
     
     # Read in all the images
@@ -226,7 +231,8 @@ def main():
             #meanStack += (im1d + im2d) / N
     
 
-        # Display the average edgemap. Might use this for template matching
+        # Display the average edgemap. Used to generate the tempate that
+        # is used for registration.
         #cv2.imwrite("meanStackDonut8x.jpg", meanStack)        
         #cv2.imshow("Mean of ears", meanStack/np.amax(meanStack))
         #cv2.waitKey(0)
@@ -267,5 +273,5 @@ def main():
     return accuracy, similarityMatrix, isCorrect, rankOfTruth, firstSet, secondSet
 
 
-# Actually execute the program
+# Actually execute the program so that calling this file runs everything.
 accuracy, similarityMatrix, isCorrect, rankOfTruth, firstSet, secondSet = main()

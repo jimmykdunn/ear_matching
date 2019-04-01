@@ -24,7 +24,7 @@ DO_PCA = False
 # Do template alignment (True) or not (False)
 DO_TEMPLATE_ALIGN = True
 
-# Template image
+# Template image. This is a binary mask that is used for image alignment.
 TEMPLATE_IMAGE = "customMeanStackTemplate8x.png"
 
 # Do edge detection (True) or not (False)
@@ -34,7 +34,7 @@ DO_EDGE_DETECTION = False
 NUM_COMPONENTS = 15
 
 # Number of ears to use (of 195) (use smaller numbers to make faster for debugging)
-NUM_TO_READ = 16
+NUM_TO_READ = 195
 
 # Size of thumbnails for final display (pixels)
 THUMBSIZE = (63,84)
