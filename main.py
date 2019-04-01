@@ -211,26 +211,26 @@ def main():
     
     # Do edge detection if requested
     if p.DO_EDGE_DETECTION:
-        meanStack = np.zeros_like(firstSet[0].rawImage).astype(float)
-        N = float(len(firstSet) + len(secondSet))
+        #meanStack = np.zeros_like(firstSet[0].rawImage).astype(float)
+        #N = float(len(firstSet) + len(secondSet))
         for i, (image1, image2) in enumerate(zip(firstSet,secondSet)):
             print("Running edge detection on image ", i, " of ", len(firstSet))
             image1.detectEdges()
             image2.detectEdges()
     
-            dkernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(10,10))
-            im1d = cv2.dilate(image1.rawImage, dkernel, iterations=1)
-            im2d = cv2.dilate(image2.rawImage, dkernel, iterations=1)
+            #dkernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(10,10))
+            #im1d = cv2.dilate(image1.rawImage, dkernel, iterations=1)
+            #im2d = cv2.dilate(image2.rawImage, dkernel, iterations=1)
     
             # Accumulate the mean of the images for later use
-            meanStack += (im1d + im2d) / N
+            #meanStack += (im1d + im2d) / N
     
 
         # Display the average edgemap. Might use this for template matching
-        cv2.imwrite("meanStackDonut8x.jpg", meanStack)        
-        cv2.imshow("Mean of ears", meanStack/np.amax(meanStack))
-        cv2.waitKey(0)
-        cv2.destroyWindow("Mean of ears")
+        #cv2.imwrite("meanStackDonut8x.jpg", meanStack)        
+        #cv2.imshow("Mean of ears", meanStack/np.amax(meanStack))
+        #cv2.waitKey(0)
+        #cv2.destroyWindow("Mean of ears")
         
     
     # Generate an eigendecomposition for each image for use in similarity calculation
@@ -240,7 +240,7 @@ def main():
         skl_pca = pca.fit(firstSet)
         
         # Display eigenbasis (for debugging)
-        #pca.displayEigenbasis(skl_pca)
+        pca.displayEigenbasis(skl_pca)
         
         # Decompose all the images in each set
         for i, (image1, image2) in enumerate(zip(firstSet,secondSet)):

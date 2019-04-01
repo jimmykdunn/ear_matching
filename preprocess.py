@@ -3,6 +3,7 @@
 # Code written for CS 640 (Artificial Intelligence) project.
 import numpy as np
 import cv2
+import copy
 
 # Internal imports
 import edgeDetection
@@ -94,10 +95,47 @@ def trimKeypoints(keypoints, descriptors, image):
     return newkeypoints, np.array(newdescriptors)
 
 
+# Scale the input image by the input fraction, cropping back to the original
+# size.
+def scaleImage(image, scalex, scaley):
+    ny,nx,nc = image.shape
+    # Crop and expand
+    if scaley > 1.0:
+        cropped = image[int(ny*(scaley-1)/2):int(ny-ny*(scaley-1)),:]
+        image = cv2.resize(cropped, (nx, ny))
+    if scalex > 1.0:
+        cropped = image[:,int(nx*(scalex-1)/2):int(nx-nx*(scalex-1)),:]
+        image = cv2.resize(cropped, (nx, ny))
+        
+    # Contract and pad
+    if scaley < 1.0:
+        newy = int(scaley*ny)
+        if newy % 2 == 1:
+            newy += 1
+        contracted = cv2.resize(image, (nx,newy))
+        padded = np.zeros_like(image)
+        yextra = ny-contracted.shape[0]
+        if yextra%2 == 1:
+            yextra -= 1 # force even
+        padded[int(yextra/2):-int(yextra/2),:,:] = contracted
+        image = padded
+    if scalex < 1.0:
+        newx = int(scalex*nx)
+        if newx % 2 == 1:
+            newx += 1
+        contracted = cv2.resize(image, (newx,ny))
+        padded = np.zeros_like(image)
+        xextra = nx-contracted.shape[1]
+        if xextra%2 == 1:
+            xextra -= 1 # force even
+        padded[:,int(xextra/2):-int(xextra/2),:] = contracted
+        image = padded
+
+    return image
 
 # Align with warped template-matching method
 def alignViaTemplate(image, templates):    
-    nx,ny,nc = image.shape
+    ny,nx,nc = image.shape
     
     # Calculate image edges to use in template matching
     edgemap = edgeDetection.cannyEdges(image)   
@@ -114,10 +152,25 @@ def alignViaTemplate(image, templates):
     bestTemplate = templates[bestTemplateIdx]
     
     # Apply the best template's transformation IN REVERSE!!!
+    print("Alignment params: xs=" + str(int(bestTemplate.xs)) +
+          ", ys=" + str(int(bestTemplate.ys)) + ", rot=", str(bestTemplate.rot))
+    image = scaleImage(image,2.0-bestTemplate.stretchx, 2.0-bestTemplate.stretchy)
     image = np.roll(image,-int(bestTemplate.xs),axis=1) #x shift
     image = np.roll(image,-int(bestTemplate.ys),axis=0) #y shift
-    R = cv2.getRotationMatrix2D((ny/2, nx/2), -bestTemplate.rot, 1.0)
-    image = cv2.warpAffine(image, R, (ny, nx)) # rotation
+    R = cv2.getRotationMatrix2D((nx/2, ny/2), -bestTemplate.rot, 1.0)
+    image = cv2.warpAffine(image, R, (nx, ny)) # rotation
+    
+    # Display the template over the (now aligned) ear image to check for 
+    # goodness of fit
+    #baseTemplate = []
+    #for t in templates:
+    #    if t.xs == 0 and t.ys == 0 and t.rot == 0:
+    #        baseTemplate = t
+    #edgeghost = copy.deepcopy(image)
+    #edgeghost[baseTemplate.mask > 0] = 255
+    #cv2.imshow("", edgeghost)
+    #cv2.waitKey(0)
+    #cv2.destroyWindow("")
     
     return image, R
 
@@ -168,11 +221,11 @@ def skinDetect(src):
 
 # Cleans up the input mask
 def cleanMask(mask):
-    nx,ny = mask.shape
+    ny,nx = mask.shape
     x = np.arange(nx)-nx/2
     y = np.arange(ny)-ny/2
-    x = np.repeat(x[:,np.newaxis],ny,axis=1)
-    y = np.repeat(y[:,np.newaxis],nx,axis=1).T
+    x = np.repeat(x[:,np.newaxis],ny,axis=1).T
+    y = np.repeat(y[:,np.newaxis],nx,axis=1)
     distFromCenter2 = x*x + y*y
     
     # Remove the inner piece of the mask - this usually forces the ear canal

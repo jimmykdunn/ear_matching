@@ -31,10 +31,10 @@ TEMPLATE_IMAGE = "customMeanStackTemplate8x.png"
 DO_EDGE_DETECTION = False
 
 # Number of eigencomponents to use in PCA decomposition
-NUM_COMPONENTS = 40
+NUM_COMPONENTS = 15
 
 # Number of ears to use (of 195) (use smaller numbers to make faster for debugging)
-NUM_TO_READ = 195
+NUM_TO_READ = 16
 
 # Size of thumbnails for final display (pixels)
 THUMBSIZE = (63,84)

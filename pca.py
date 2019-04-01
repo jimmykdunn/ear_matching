@@ -7,7 +7,7 @@
 
 from sklearn.decomposition import PCA
 import numpy as np
-import matplotlib.pyplot as plt
+import cv2
 
 import parameters as p
 
@@ -53,5 +53,9 @@ def displayEigenbasis(pca):
     #plt.imshow(cv2.cvtColor(displayImage, cv2.COLOR_BGR2RGB))
     displayImage -= np.amin(displayImage)
     displayImage /= np.amax(displayImage)
-    plt.imshow(displayImage)
-    plt.title("Top- " + str(len(eigenbasis)) + " Eigenears")
+    displayImage *= 255
+    displayImage= displayImage.astype(np.uint8)
+    cv2.imwrite("Top_" + str(len(eigenbasis)) + "_Eigenears" + ".jpg", displayImage)
+    cv2.imshow("Top_" + str(len(eigenbasis)) + "_Eigenears", displayImage)
+    cv2.waitKey(5000)
+    cv2.destroyWindow("Top- " + str(len(eigenbasis)) + " Eigenears")

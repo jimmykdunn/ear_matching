@@ -3,6 +3,7 @@
 # Code written for CS 640 (Artificial Intelligence) project.
 import numpy as np
 import cv2
+import parameters as p
 
 # Super basic pixel-by-pixel sum-squared difference. Standin for
 # real comparison algorithms.
@@ -10,14 +11,17 @@ def compare(image1, image2):
     
     # Disallow any pixels that are exactly zero in either image from
     # contributing to the score
-    zeropixels1 = np.sum(image1,axis=2) == 0
-    zeropixels2 = np.sum(image2,axis=2) == 0
-    zeropixels = zeropixels1*zeropixels2
-    zeropixels = zeropixels == False
-    zeropixels = zeropixels.astype(np.uint8)
-    image1c = cv2.bitwise_and(image1, image1, mask=zeropixels)
-    image2c = cv2.bitwise_and(image2, image2, mask=zeropixels)
-    
+    if not p.DO_PCA:
+        zeropixels1 = np.sum(image1,axis=2) == 0
+        zeropixels2 = np.sum(image2,axis=2) == 0
+        zeropixels = zeropixels1*zeropixels2
+        zeropixels = zeropixels == False
+        zeropixels = zeropixels.astype(np.uint8)
+        image1c = cv2.bitwise_and(image1, image1, mask=zeropixels)
+        image2c = cv2.bitwise_and(image2, image2, mask=zeropixels)
+    else:
+        image1c = image1
+        image2c = image2
     
     #cv2.imshow("nozeros", image1c)
     #cv2.waitKey(0)

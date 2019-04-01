@@ -46,7 +46,7 @@ class earImage:
                 (int(self.rawImage.shape[1]/p.SHRINK_FACTOR),
                 int(self.rawImage.shape[0]/p.SHRINK_FACTOR)))
             
-        self.nx, self.ny, self.ncolors = self.rawImage.shape
+        self.ny, self.nx, self.ncolors = self.rawImage.shape
             
         
         # Processed versions
@@ -88,11 +88,14 @@ class earImage:
             self.rawImage = np.repeat(np.reshape(self.rawImage,
                 [self.rawImage.shape[0],self.rawImage.shape[1],1]), 3, axis=2)
             
-        self.nx, self.ny, self.ncolors = self.rawImage.shape
+        self.ny, self.nx, self.ncolors = self.rawImage.shape
         
         #cv2.imshow("preprocessed", self.rawImage)
         #cv2.waitKey(0)
         #cv2.destroyWindow("preprocessed")
+        
+        # Write preprocessed image to file for later analysis
+        cv2.imwrite("preprocessed"+os.sep+self.nameString + ".jpg", self.rawImage)       
         
         
     # Decompose into eigencomponents using already-fit PCA object
