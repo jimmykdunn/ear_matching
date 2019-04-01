@@ -45,11 +45,6 @@ class earImage:
                 (int(self.rawImage.shape[0]/p.SHRINK_FACTOR),
                 int(self.rawImage.shape[1]/p.SHRINK_FACTOR)))
             
-        if p.BLACK_AND_WHITE:
-            self.rawImage = np.mean(self.rawImage, axis=2).astype(np.uint8)
-            self.rawImage = np.repeat(np.reshape(self.rawImage,
-                [self.rawImage.shape[0],self.rawImage.shape[1],1]), 3, axis=2)
-            
         self.nx, self.ny, self.ncolors = self.rawImage.shape
             
         
@@ -67,23 +62,34 @@ class earImage:
         cv2.waitKey(time)
         cv2.destroyWindow(self.nameString)
         
-    # Scale the image. May want to input something other than the raw image
-    def scale(self):
-        return preprocess.scale(self.rawImage)
     
     # Align the image. May want to input something other than the raw image
-    def align(self):
-        return preprocess.align(self.rawImage)
+    def align(self, templateImage):
+        self.rawImage, h = preprocess.align(self.rawImage, templateImage.rawImage)
     
     # Remove (zero out) background. May want to input something other than the raw image
     def removeBackground(self):
-        return preprocess.align(self.rawImage)
+        self.rawImage = preprocess.removeBackground(self.rawImage)
     
     # Run preprocessing suite on the ear image
-    def preprocess(self):
+    def preprocess(self, templateImage):
         self.removeBackground()
-        self.align()
-        self.scale()
+        #self.align(templateImage)
+        
+        #cv2.imshow("aligned", self.rawImage)
+        #cv2.waitKey(0)
+        #cv2.destroyWindow("aligned")
+        
+        if p.BLACK_AND_WHITE:
+            self.rawImage = np.mean(self.rawImage, axis=2).astype(np.uint8)
+            self.rawImage = np.repeat(np.reshape(self.rawImage,
+                [self.rawImage.shape[0],self.rawImage.shape[1],1]), 3, axis=2)
+            
+        self.nx, self.ny, self.ncolors = self.rawImage.shape
+        
+        #cv2.imshow("preprocessed", self.rawImage)
+        #cv2.waitKey(0)
+        #cv2.destroyWindow("preprocessed")
         
         
     # Decompose into eigencomponents using already-fit PCA object
@@ -94,6 +100,9 @@ class earImage:
     # Run edge detection
     def detectEdges(self):
         self.rawImage = edgeDetection.cannyEdges(self.rawImage)
+        #cv2.imshow("edges", self.rawImage)
+        #cv2.waitKey(0)
+        #cv2.destroyWindow("edges")
     
     # Compare this image to another image, get a score for it
     def compare(self, other):

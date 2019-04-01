@@ -13,7 +13,7 @@ DATA_PATH = "data"
 DONUT = True
 
 # Shrink images by this factor before doing anything. Set to 1 to do no shrinking.
-SHRINK_FACTOR = 16
+SHRINK_FACTOR = 8
 
 # True to convert to black and white (required for edge detection)
 BLACK_AND_WHITE = False
@@ -22,7 +22,7 @@ BLACK_AND_WHITE = False
 DO_PCA = False 
 
 # Do edge detection (True) or not (False)
-DO_EDGE_DETECTION = True
+DO_EDGE_DETECTION = False
 
 # Number of eigencomponents to use in PCA decomposition
 NUM_COMPONENTS = 40
