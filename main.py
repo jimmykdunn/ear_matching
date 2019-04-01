@@ -13,10 +13,15 @@ import matplotlib.pyplot as plt
 import earImage
 import pca
 import parameters as p
+import template
 
 
 # Reads every image
 def readImages():
+    # Generate template set once ahead of time
+    print("Generating alignment templates from " + p.TEMPLATE_IMAGE)
+    templates = template.makeTemplates()
+        
     # Loop over the images, reading them in
     firstSet = [] # all the images without a 't' in their title
     secondSet = [] # all the images with a 't' in their title
@@ -35,16 +40,13 @@ def readImages():
             
         image = earImage.earImage(file) # read and initialize the image
         
-        # Save off the first image to use as a template to register the rest 
-        # of them to.
-        #if (i%2) == 0: # CHEATING! Register images to their known pair! just to see if it works!
-        if i == 0:
-            templateImage = image
-        
         # Preprocess the image
-        image.preprocess(templateImage)
+        image.preprocess(templates)
         
         # FOR TESTING ONLY
+        #cv2.imshow("image.nameString", image.rawImage)
+        #cv2.waitKey(1000)
+        #cv2.destroyWindow(image.nameString)
         #image.displayRawRGB(time=1000) # display image for 1s
         
         # Add image to the first set if it doesn't have a 't' in its name,
@@ -209,26 +211,26 @@ def main():
     
     # Do edge detection if requested
     if p.DO_EDGE_DETECTION:
-        #meanStack = np.zeros_like(firstSet[0].rawImage).astype(float)
-        #N = float(len(firstSet) + len(secondSet))
+        meanStack = np.zeros_like(firstSet[0].rawImage).astype(float)
+        N = float(len(firstSet) + len(secondSet))
         for i, (image1, image2) in enumerate(zip(firstSet,secondSet)):
             print("Running edge detection on image ", i, " of ", len(firstSet))
             image1.detectEdges()
             image2.detectEdges()
     
-            #dkernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(10,10))
-            #im1d = cv2.dilate(image1.rawImage, dkernel, iterations=1)
-            #im2d = cv2.dilate(image2.rawImage, dkernel, iterations=1)
+            dkernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(10,10))
+            im1d = cv2.dilate(image1.rawImage, dkernel, iterations=1)
+            im2d = cv2.dilate(image2.rawImage, dkernel, iterations=1)
     
             # Accumulate the mean of the images for later use
-            #meanStack += (im1d + im2d) / N
+            meanStack += (im1d + im2d) / N
     
 
         # Display the average edgemap. Might use this for template matching
-        #cv2.imwrite("meanStackDonut8x.jpg", meanStack)        
-        #cv2.imshow("Mean of ears", meanStack/np.amax(meanStack))
-        #cv2.waitKey(0)
-        #cv2.destroyWindow("Mean of ears")
+        cv2.imwrite("meanStackDonut8x.jpg", meanStack)        
+        cv2.imshow("Mean of ears", meanStack/np.amax(meanStack))
+        cv2.waitKey(0)
+        cv2.destroyWindow("Mean of ears")
         
     
     # Generate an eigendecomposition for each image for use in similarity calculation

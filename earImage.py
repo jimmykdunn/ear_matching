@@ -14,6 +14,7 @@ import preprocess
 import pca
 import parameters as p
 import edgeDetection
+import template
 
 # Image type enumeration
 FIRST = 0  # no donut, first image (no extension)
@@ -42,8 +43,8 @@ class earImage:
         self.rawImage = cv2.imread(file)
         if not p.SHRINK_FACTOR == 1:
             self.rawImage = cv2.resize(self.rawImage, 
-                (int(self.rawImage.shape[0]/p.SHRINK_FACTOR),
-                int(self.rawImage.shape[1]/p.SHRINK_FACTOR)))
+                (int(self.rawImage.shape[1]/p.SHRINK_FACTOR),
+                int(self.rawImage.shape[0]/p.SHRINK_FACTOR)))
             
         self.nx, self.ny, self.ncolors = self.rawImage.shape
             
@@ -64,17 +65,19 @@ class earImage:
         
     
     # Align the image. May want to input something other than the raw image
-    def align(self, templateImage):
-        self.rawImage, h = preprocess.align(self.rawImage, templateImage.rawImage)
+    def align(self, templates):
+        if p.DO_TEMPLATE_ALIGN:
+            print("Doing template alignment...")
+            self.rawImage, h = preprocess.alignViaTemplate(self.rawImage, templates)
     
     # Remove (zero out) background. May want to input something other than the raw image
     def removeBackground(self):
         self.rawImage = preprocess.removeBackground(self.rawImage)
     
     # Run preprocessing suite on the ear image
-    def preprocess(self, templateImage):
+    def preprocess(self, templates):
         self.removeBackground()
-        #self.align(templateImage)
+        self.align(templates)
         
         #cv2.imshow("aligned", self.rawImage)
         #cv2.waitKey(0)

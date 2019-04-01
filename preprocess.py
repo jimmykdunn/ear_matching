@@ -4,6 +4,9 @@
 import numpy as np
 import cv2
 
+# Internal imports
+import edgeDetection
+
 MAX_FEATURES = 500
 GOOD_MATCH_PERCENT = 0.05 #0.15
 
@@ -11,7 +14,7 @@ GOOD_MATCH_PERCENT = 0.05 #0.15
 # Shifts and rotates the image
 # This function is based on:
 # https://www.learnopencv.com/image-alignment-feature-based-using-opencv-c-python/
-def align(im1, im2):
+def alignViaORB(im1, im2):
  
     # Convert images to grayscale
     im1Gray = cv2.cvtColor(im1, cv2.COLOR_BGR2GRAY)
@@ -90,6 +93,33 @@ def trimKeypoints(keypoints, descriptors, image):
     
     return newkeypoints, np.array(newdescriptors)
 
+
+
+# Align with warped template-matching method
+def alignViaTemplate(image, templates):    
+    nx,ny,nc = image.shape
+    
+    # Calculate image edges to use in template matching
+    edgemap = edgeDetection.cannyEdges(image)   
+    
+    # Loop through each template and calculate a match score using this image's
+    # edgemap compared with the template.
+    templateScores = []
+    for template in templates:
+        score = template.checkMatchStrength(edgemap)
+        templateScores.append(score)
+        
+    # Find template with best score
+    bestTemplateIdx = np.argmax(templateScores)
+    bestTemplate = templates[bestTemplateIdx]
+    
+    # Apply the best template's transformation IN REVERSE!!!
+    image = np.roll(image,-int(bestTemplate.xs),axis=1) #x shift
+    image = np.roll(image,-int(bestTemplate.ys),axis=0) #y shift
+    R = cv2.getRotationMatrix2D((ny/2, nx/2), -bestTemplate.rot, 1.0)
+    image = cv2.warpAffine(image, R, (ny, nx)) # rotation
+    
+    return image, R
 
 # Removes background that is not part of the ear
 def removeBackground(image):

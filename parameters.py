@@ -21,6 +21,12 @@ BLACK_AND_WHITE = False
 # Set to true to do a PCA decomposition before comparison
 DO_PCA = False 
 
+# Do template alignment (True) or not (False)
+DO_TEMPLATE_ALIGN = True
+
+# Template image
+TEMPLATE_IMAGE = "customMeanStackTemplate8x.png"
+
 # Do edge detection (True) or not (False)
 DO_EDGE_DETECTION = False
 
