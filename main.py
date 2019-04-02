@@ -29,13 +29,18 @@ def readImages():
         print("Generating alignment templates from " + p.TEMPLATE_IMAGE)
         templates = template.makeTemplates()
         
+    # Loop over every image file in the directory so we can sort them in 
+    # name order.
+    filelist = glob.glob(p.DATA_PATH + "/*jpg*")
+    sfilelist = sorted(filelist)
+        
     # Loop over the images, reading them in
     firstSet = [] # all the images without a 't' in their title
     secondSet = [] # all the images with a 't' in their title
-    filelist = glob.glob(p.DATA_PATH + "/*jpg*")
     print("Reading images from file")
     i = 0
-    for file in filelist:
+    #for file in filelist:
+    for file in sfilelist:
         # Skip images that do/don't have the "donut" device per the DONUT parameter
         itype = file.split(os.sep)[-1].split('.')[0].split('_')[-1]
         if p.DONUT: # skip non-donut images
