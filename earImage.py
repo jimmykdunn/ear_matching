@@ -92,7 +92,8 @@ class earImage:
     # Run suite of preprocessing algorithms on the ear image
     def preprocess(self, templates=[]):
         # Run background removal algorithm
-        self.removeBackground()
+        if p.REMOVE_BACKGROUND:
+            self.removeBackground()
         
         # Run template alignment algorithm
         if p.DO_TEMPLATE_ALIGN:
@@ -114,9 +115,9 @@ class earImage:
             
         self.ny, self.nx, self.ncolors = self.rawImage.shape
         
-        cv2.imshow("preprocessed", self.rawImage)
-        cv2.waitKey(0)
-        cv2.destroyWindow("preprocessed")
+        #cv2.imshow("preprocessed", self.rawImage)
+        #cv2.waitKey(0)
+        #cv2.destroyWindow("preprocessed")
         
         # Write preprocessed image to file for later analysis
         cv2.imwrite("preprocessed"+os.sep+self.nameString + ".jpg", self.rawImage)       
@@ -130,6 +131,11 @@ class earImage:
     # Run edge detection alogrithm (Canny)
     def detectEdges(self):
         self.rawImage = edgeDetection.cannyEdges(self.rawImage)
+        
+        # Dilate the edgemap to allow for small perturbations
+        kernelsize = (int)(p.EDGE_DILATION_RADIUS*(self.nx+self.ny)/2)
+        dkernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(kernelsize,kernelsize))
+        self.rawImage = cv2.dilate(self.rawImage, dkernel, iterations=1)
         #cv2.imshow("edges", self.rawImage)
         #cv2.waitKey(0)
         #cv2.destroyWindow("edges")

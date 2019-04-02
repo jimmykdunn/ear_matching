@@ -228,6 +228,8 @@ def main():
             print("Running edge detection on image ", i, " of ", len(firstSet))
             image1.detectEdges()
             image2.detectEdges()
+            
+            # DILATE EDGES HERE???
     
             #dkernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(10,10))
             #im1d = cv2.dilate(image1.rawImage, dkernel, iterations=1)

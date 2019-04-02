@@ -16,7 +16,10 @@ DONUT = True
 SHRINK_FACTOR = 8
 
 # True to convert to black and white (required for edge detection)
-BLACK_AND_WHITE = False
+BLACK_AND_WHITE = True
+
+# Run background removal algorithm (True) or not (False)
+REMOVE_BACKGROUND = True;
 
 # Set to true to do a PCA decomposition before comparison
 DO_PCA = False 
@@ -36,11 +39,14 @@ TEMPLATE_IMAGE = "customMeanStackTemplate8x.png"
 # Do edge detection (True) or not (False)
 DO_EDGE_DETECTION = False
 
+# Edge detection dilation radius as a fraction of the image (width+height)/2
+EDGE_DILATION_RADIUS = 0.05
+
 # Number of eigencomponents to use in PCA decomposition
-NUM_COMPONENTS = 15
+NUM_COMPONENTS = 30
 
 # Number of ears to use (of 195) (use smaller numbers to make faster for debugging)
-NUM_TO_READ = 195
+NUM_TO_READ = 40
 
 # Size of thumbnails for final display (pixels)
 THUMBSIZE = (63,84)
