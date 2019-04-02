@@ -19,6 +19,30 @@ MAX_FEATURES = 500
 GOOD_MATCH_PERCENT = 0.05 #0.15
 
 
+# Uses the already-exising keypoints from both the image and the template image
+# that will be aligned to, generates a homography matrix using the keypoint
+# pairs, and transforms the image using that homography.
+def alignViaKeypoints(image, templateImage):
+    # Find homography matrix using keypoints
+    kp1 = image.keypoints.astype(np.int32)
+    kp2 = templateImage.keypoints.astype(np.int32)
+    h, mask = cv2.findHomography(kp1, kp2)
+    #h, mask = cv2.findHomography(kp2, kp1)
+    
+    #cv2.imshow("image", image.rawImage)
+    #cv2.imshow("template image", templateImage.rawImage)
+    #cv2.waitKey(0)
+    
+    #imMatches = cv2.drawMatches(image.rawImage, image,keypoints,
+    #                            templateImage.rawImage, templateImage.keypoints, matches, None)
+    #cv2.imwrite("matches.jpg", imMatches)
+     
+    # Use homography
+    height, width, channels = templateImage.rawImage.shape
+    alignedImage = cv2.warpPerspective(image.rawImage, h, (width, height))
+    alignedImage = np.array(alignedImage)
+    return alignedImage, h
+
 # Uses a keypoint detection and matching method to determine the homography
 # between a pair of images, then uses that homography to align (register) them.
 # This method did NOT produce reasonable results in testing.  This is primarily

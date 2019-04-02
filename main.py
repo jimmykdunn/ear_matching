@@ -24,8 +24,10 @@ import template
 # images in the "t" set.
 def readImages():
     # Generate template set once ahead of time
-    print("Generating alignment templates from " + p.TEMPLATE_IMAGE)
-    templates = template.makeTemplates()
+    templates = []
+    if p.DO_TEMPLATE_ALIGN:
+        print("Generating alignment templates from " + p.TEMPLATE_IMAGE)
+        templates = template.makeTemplates()
         
     # Loop over the images, reading them in
     firstSet = [] # all the images without a 't' in their title
@@ -45,8 +47,12 @@ def readImages():
             
         image = earImage.earImage(file) # read and initialize the image
         
+        # Save first image as the template for the remaining images
+        if p.USE_KEYPOINT_FILE and i==0:
+            templates = image
+        
         # Preprocess the image
-        image.preprocess(templates)
+        image.preprocess(templates=templates)
         
         # FOR TESTING ONLY
         #cv2.imshow("image.nameString", image.rawImage)

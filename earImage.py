@@ -10,6 +10,7 @@ import cv2
 import numpy as np
 import os
 import matplotlib.pyplot as plt
+import pandas as pd
 
 # Internal imports
 import compare_sumsqdiff
@@ -57,6 +58,10 @@ class earImage:
                 int(self.rawImage.shape[0]/p.SHRINK_FACTOR)))
             
         self.ny, self.nx, self.ncolors = self.rawImage.shape
+        
+        # Read keypoints from file if desired
+        if p.USE_KEYPOINT_FILE:
+            self.readKeypoints()
             
                      
     # Displays the image using cv2 methods for a specified duration (time)
@@ -74,18 +79,28 @@ class earImage:
         if p.DO_TEMPLATE_ALIGN:
             print("Doing template alignment...")
             self.rawImage, h = preprocess.alignViaTemplate(self.rawImage, templates)
+        if p.USE_KEYPOINT_FILE:
+            # Note templates here holds the earImage that we will align to
+            print("Doing keypoint alignment...")
+            #self.rawImage, h = preprocess.alignViaORB(self.rawImage, templates.rawImage)
+            self.rawImage, h = preprocess.alignViaKeypoints(self, templates)
     
     # Remove (zero out) background
     def removeBackground(self):
         self.rawImage = preprocess.removeBackground(self.rawImage)
     
     # Run suite of preprocessing algorithms on the ear image
-    def preprocess(self, templates):
+    def preprocess(self, templates=[]):
         # Run background removal algorithm
         self.removeBackground()
         
-        # Run alignment algorithm
-        self.align(templates)
+        # Run template alignment algorithm
+        if p.DO_TEMPLATE_ALIGN:
+            self.align(templates)
+            
+        # Run pre-existing keypoint alignment algorithm
+        if p.USE_KEYPOINT_FILE:
+            self.align(templates)
         
         #cv2.imshow("aligned", self.rawImage)
         #cv2.waitKey(0)
@@ -99,9 +114,9 @@ class earImage:
             
         self.ny, self.nx, self.ncolors = self.rawImage.shape
         
-        #cv2.imshow("preprocessed", self.rawImage)
-        #cv2.waitKey(0)
-        #cv2.destroyWindow("preprocessed")
+        cv2.imshow("preprocessed", self.rawImage)
+        cv2.waitKey(0)
+        cv2.destroyWindow("preprocessed")
         
         # Write preprocessed image to file for later analysis
         cv2.imwrite("preprocessed"+os.sep+self.nameString + ".jpg", self.rawImage)       
@@ -138,3 +153,24 @@ class earImage:
         
         return score
 
+    # Read keypoints from keypoints file. Used for homographic registration
+    def readKeypoints(self):
+        keyptDict = pd.read_csv(p.KEYPOINT_FILE, index_col=0, header=None) # read the csv keypoint file
+        #keyptDict.set_index(keyptDict.columns[0])
+        keypts = keyptDict.loc[self.nameString]
+        self.keypoints = []
+        for pt in keypts:
+            self.keypoints.append(pt)
+            
+        # Don't use the first one
+        self.keypoints = self.keypoints[2:]
+            
+        self.keypoints = np.reshape(self.keypoints, (-1,2))
+        
+        
+        # Keypoints are in image fraction (x,y), need to multiply by
+        # our image size to use them. Also swap dimensions
+        for pt in self.keypoints:
+            pt[0] *= self.nx
+            pt[1] *= self.ny
+            

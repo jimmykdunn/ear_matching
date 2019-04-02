@@ -52,7 +52,7 @@ def manualAlignment():
     #global imagedisp
     
     # File to save keypoints to
-    fp = open('myKeypoints.csv', 'w')
+    fp = open('myKeypointsTEMP.csv', 'w')
     
     # Loop through all images
     filelist = glob.glob(p.DATA_PATH + "/*jpg*")

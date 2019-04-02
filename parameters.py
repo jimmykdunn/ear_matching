@@ -21,8 +21,14 @@ BLACK_AND_WHITE = False
 # Set to true to do a PCA decomposition before comparison
 DO_PCA = False 
 
-# Do template alignment (True) or not (False)
-DO_TEMPLATE_ALIGN = True
+# Use keypoints from file for registration (True) or not (False)
+USE_KEYPOINT_FILE = True
+
+# csv file where manual keypoints are located
+KEYPOINT_FILE = "myKeypoints.csv"
+
+# Do automatic template alignment (True) or not (False) (different from keypoints)
+DO_TEMPLATE_ALIGN = False
 
 # Template image. This is a binary mask that is used for image alignment.
 TEMPLATE_IMAGE = "customMeanStackTemplate8x.png"
