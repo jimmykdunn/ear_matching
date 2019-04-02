@@ -217,6 +217,7 @@ def displayResults(accuracy, isCorrect, similarityMatrix,
         i += 1
     plt.imshow(cv2.cvtColor(thumbstrip, cv2.COLOR_BGR2RGB), extent=[0.5,len(peakIds)+0.5,2,0])
     plt.title("First set images (top) with their best matches in 2nd set (bottom)")
+    cv2.imwrite("bestMatchDisplay.png", thumbstrip)
 
 
 # Main function. Call this to run everything!!!
@@ -271,7 +272,7 @@ def main():
     # Calculate the pairwise similarity between images
     similarityMatrix = calculateSimilarityMatrix(firstSet, secondSet)
     
-    # Calculate accuracy using the similarity matrix peak (off-diagonal)
+    # Calculate accuracy using the similarity matrix
     accuracy, isCorrect, peakId = \
         calculateAccuracy(similarityMatrix, firstSet, secondSet)
     

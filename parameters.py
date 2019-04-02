@@ -10,13 +10,13 @@
 DATA_PATH = "data"
 
 # True to read in images with the ear "donut", false to read in images without it
-DONUT = True
+DONUT = False
 
 # Shrink images by this factor before doing anything. Set to 1 to do no shrinking.
 SHRINK_FACTOR = 8
 
 # True to convert to black and white (required for edge detection)
-BLACK_AND_WHITE = True
+BLACK_AND_WHITE = False
 
 # Run background removal algorithm (True) or not (False)
 REMOVE_BACKGROUND = True;
@@ -46,7 +46,7 @@ EDGE_DILATION_RADIUS = 0.05
 NUM_COMPONENTS = 30
 
 # Number of ears to use (of 195) (use smaller numbers to make faster for debugging)
-NUM_TO_READ = 40
+NUM_TO_READ = 195
 
 # Size of thumbnails for final display (pixels)
 THUMBSIZE = (63,84)
