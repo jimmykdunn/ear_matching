@@ -5,7 +5,9 @@
 # This file contains all PCA eigendecomposition functions.  It is essentially
 # a wrapper for the sklearn library's PCA capabilities.
 
+from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
+import copy
 import numpy as np
 import cv2
 
@@ -16,7 +18,14 @@ def fit(images):
     # Set up the input data vector (images) in a sklearnPCA-friendly format
     baseImages = []
     for image in images:
-        baseImages.append(image.rawImage.ravel())
+        baseImages.append(copy.copy(image.rawImage.ravel()))
+        
+        
+    scaler = StandardScaler()
+    scaler.fit(baseImages)
+    print("MEAN BEFORE: ", np.mean(baseImages))
+    baseImages = scaler.transform(baseImages)
+    print("MEAN AFTER: ", np.mean(baseImages))
     
     pca = PCA(n_components=p.NUM_COMPONENTS, whiten=True).fit(baseImages)
         
