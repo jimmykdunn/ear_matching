@@ -22,7 +22,7 @@ SHRINK_FACTOR = 8
 BLACK_AND_WHITE = False
 
 # Run background removal algorithm (True) or not (False)
-REMOVE_BACKGROUND = True;
+REMOVE_BACKGROUND = True
 
 # Use keypoints from file for registration (True) or not (False)
 USE_KEYPOINT_FILE = True
@@ -37,7 +37,7 @@ DO_TEMPLATE_ALIGN = False
 TEMPLATE_IMAGE = "customMeanStackTemplate8x.png"
 
 # Do edge detection (True) or not (False)
-DO_EDGE_DETECTION = False
+DO_EDGE_DETECTION = True
 
 # Edge detection dilation radius as a fraction of the image (width+height)/2
 EDGE_DILATION_RADIUS = 0.05
@@ -46,7 +46,7 @@ EDGE_DILATION_RADIUS = 0.05
 DO_PCA = False 
 
 # Number of eigencomponents to use in PCA decomposition
-NUM_COMPONENTS = 30
+NUM_COMPONENTS = 80
 
 # Size of thumbnails for final display (pixels)
 THUMBSIZE = (63,84)

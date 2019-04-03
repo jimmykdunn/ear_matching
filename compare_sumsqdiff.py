@@ -15,21 +15,25 @@ def compare(image1, image2):
         zeropixels1 = np.sum(image1,axis=2) == 0
         zeropixels2 = np.sum(image2,axis=2) == 0
         zeropixels = zeropixels1*zeropixels2
-        zeropixels = zeropixels == False
+        nonzeropixels = zeropixels == False
         zeropixels = zeropixels.astype(np.uint8)
-        image1c = cv2.bitwise_and(image1, image1, mask=zeropixels)
-        image2c = cv2.bitwise_and(image2, image2, mask=zeropixels)
+        #image1c = cv2.bitwise_and(image1, image1, mask=nonzeropixels)
+        #image2c = cv2.bitwise_and(image2, image2, mask=nonzeropixels)
+        
+        # Sum squared difference, scaled to be between zero and one
+        score = 1.0 / (1.0 + np.mean( \
+             (image1[nonzeropixels]/np.mean(image1[nonzeropixels]) - \
+             image2[nonzeropixels]/np.mean(image2[nonzeropixels]))**2))
     else:
-        image1c = image1
-        image2c = image2
+        
+        # Sum squared difference, scaled to be between zero and one
+        score = 1.0 / (1.0 + np.mean( \
+            (image1/np.mean(image1) - \
+             image2/np.mean(image2))**2))
     
     #cv2.imshow("nozeros", image1c)
     #cv2.waitKey(0)
     #cv2.destroyWindow("nozeros")
     
-    # Sum squared difference, scaled to be between zero and one
-    score = 1.0 / (1.0 + np.mean( \
-        (image1c/np.mean(image1c) - \
-         image2c/np.mean(image2c))**2))
     
     return score

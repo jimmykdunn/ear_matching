@@ -28,6 +28,9 @@ def fit(images):
     print("MEAN AFTER: ", np.mean(baseImages))
     
     pca = PCA(n_components=p.NUM_COMPONENTS, whiten=True).fit(baseImages)
+    
+    explained_variance = pca.explained_variance_ratio_ 
+    print("EXPLAINED VARIANCE RATIO: ", explained_variance)
         
     
     pca.shape = images[0].rawImage.shape #tack on a shape parameter for later use
