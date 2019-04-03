@@ -172,6 +172,8 @@ def giveBorder(image, color, npix=3):
 def displayResults(accuracy, isCorrect, similarityMatrix, 
                    firstSet, secondSet, rankOfTruth, peakIds):         
     print("=========================") # dividing line
+    p.printParameters() # print parameters we used for clarity        
+    print("=========================") # dividing line
     if p.DONUT:
         print("Performance for images WITH donut-device")
     else:
@@ -218,6 +220,8 @@ def displayResults(accuracy, isCorrect, similarityMatrix,
     plt.imshow(cv2.cvtColor(thumbstrip, cv2.COLOR_BGR2RGB), extent=[0.5,len(peakIds)+0.5,2,0])
     plt.title("First set images (top) with their best matches in 2nd set (bottom)")
     cv2.imwrite("bestMatchDisplay.png", thumbstrip)
+    
+    # Histogram of rank of best match
 
 
 # Main function. Call this to run everything!!!

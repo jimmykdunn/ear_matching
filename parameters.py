@@ -10,7 +10,10 @@
 DATA_PATH = "data"
 
 # True to read in images with the ear "donut", false to read in images without it
-DONUT = False
+DONUT = True
+
+# Number of ears to use (of 195) (use smaller numbers to make faster for debugging)
+NUM_TO_READ = 5
 
 # Shrink images by this factor before doing anything. Set to 1 to do no shrinking.
 SHRINK_FACTOR = 8
@@ -20,9 +23,6 @@ BLACK_AND_WHITE = False
 
 # Run background removal algorithm (True) or not (False)
 REMOVE_BACKGROUND = True;
-
-# Set to true to do a PCA decomposition before comparison
-DO_PCA = False 
 
 # Use keypoints from file for registration (True) or not (False)
 USE_KEYPOINT_FILE = True
@@ -42,14 +42,32 @@ DO_EDGE_DETECTION = False
 # Edge detection dilation radius as a fraction of the image (width+height)/2
 EDGE_DILATION_RADIUS = 0.05
 
+# Set to true to do a PCA decomposition before comparison
+DO_PCA = False 
+
 # Number of eigencomponents to use in PCA decomposition
 NUM_COMPONENTS = 30
-
-# Number of ears to use (of 195) (use smaller numbers to make faster for debugging)
-NUM_TO_READ = 195
 
 # Size of thumbnails for final display (pixels)
 THUMBSIZE = (63,84)
 
 # Display images at this size (pixels). (504,672) is 1/6 raw image size
 DISPLAY_SHAPE = (504,672) 
+
+def printParameters():
+    print("DATA_PATH:            ", DATA_PATH)
+    print("DONUT:                ", DONUT)
+    print("NUM_TO_READ:          ", NUM_TO_READ)
+    print("SHRINK_FACTOR:        ", SHRINK_FACTOR)
+    print("BLACK_AND_WHITE:      ", BLACK_AND_WHITE)
+    print("REMOVE_BACKGROUND:    ", REMOVE_BACKGROUND)
+    print("USE_KEYPOINT_FILE:    ", USE_KEYPOINT_FILE)
+    print("KEYPOINT_FILE:        ", KEYPOINT_FILE)
+    print("DO_TEMPLATE_ALIGN:    ", DO_TEMPLATE_ALIGN)
+    print("TEMPLATE_IMAGE:       ", TEMPLATE_IMAGE)
+    print("DO_EDGE_DETECTION:    ", DO_EDGE_DETECTION)
+    print("EDGE_DILATION_RADIUS: ", EDGE_DILATION_RADIUS)
+    print("DO_PCA:               ", DO_PCA)
+    print("NUM_COMPONENTS:       ", NUM_COMPONENTS)
+    print("THUMBSIZE:            ", THUMBSIZE)
+    print("DISPLAY_SHAPE:        ", DISPLAY_SHAPE)
