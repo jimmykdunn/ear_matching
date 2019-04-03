@@ -222,6 +222,17 @@ def displayResults(accuracy, isCorrect, similarityMatrix,
     cv2.imwrite("bestMatchDisplay.png", thumbstrip)
     
     # Histogram of rank of best match
+    # The more datapoints that are at or near 1, the better
+    nImages = len(isCorrect)
+    plt.figure() # make a new figure
+    bins = np.arange(int(nImages/5)+1) * 5
+    n, bins, patches = plt.hist(rankOfTruth, bins=bins, facecolor='blue', 
+                                alpha=0.5)
+    plt.xlabel("Rank of true match")
+    plt.ylabel("Count (out of " + str(len(isCorrect)) + ")")
+    plt.title("Histogram of true match rank")
+    plt.show()
+    plt.savefig('rankOfTrueMatchHistogram.png')
 
 
 # Main function. Call this to run everything!!!

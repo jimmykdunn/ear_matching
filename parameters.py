@@ -13,7 +13,7 @@ DATA_PATH = "data"
 DONUT = True
 
 # Number of ears to use (of 195) (use smaller numbers to make faster for debugging)
-NUM_TO_READ = 5
+NUM_TO_READ = 195
 
 # Shrink images by this factor before doing anything. Set to 1 to do no shrinking.
 SHRINK_FACTOR = 8
