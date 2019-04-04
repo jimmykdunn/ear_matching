@@ -22,10 +22,10 @@ SHRINK_FACTOR = 8
 BLACK_AND_WHITE = False
 
 # Run background removal algorithm (True) or not (False)
-REMOVE_BACKGROUND = True
+REMOVE_BACKGROUND = False
 
 # Use keypoints from file for registration (True) or not (False)
-USE_KEYPOINT_FILE = True
+USE_KEYPOINT_FILE = False
 
 # csv file where manual keypoints are located
 KEYPOINT_FILE = "myKeypoints.csv"
@@ -39,14 +39,17 @@ TEMPLATE_IMAGE = "customMeanStackTemplate8x.png"
 # Do edge detection (True) or not (False)
 DO_EDGE_DETECTION = True
 
+# Edge threshold range
+EDGE_RANGE = [100,200]  # default [50,250]
+
 # Edge detection dilation radius as a fraction of the image (width+height)/2
-EDGE_DILATION_RADIUS = 0.05
+EDGE_DILATION_RADIUS = 0.01
 
 # Set to true to do a PCA decomposition before comparison
 DO_PCA = False 
 
 # Number of eigencomponents to use in PCA decomposition
-NUM_COMPONENTS = 80
+NUM_COMPONENTS = 40
 
 # Size of thumbnails for final display (pixels)
 THUMBSIZE = (63,84)
@@ -66,6 +69,7 @@ def printParameters():
     print("DO_TEMPLATE_ALIGN:    ", DO_TEMPLATE_ALIGN)
     print("TEMPLATE_IMAGE:       ", TEMPLATE_IMAGE)
     print("DO_EDGE_DETECTION:    ", DO_EDGE_DETECTION)
+    print("EDGE_RANGE:           ", EDGE_RANGE)
     print("EDGE_DILATION_RADIUS: ", EDGE_DILATION_RADIUS)
     print("DO_PCA:               ", DO_PCA)
     print("NUM_COMPONENTS:       ", NUM_COMPONENTS)
