@@ -202,23 +202,27 @@ def displayResults(accuracy, isCorrect, similarityMatrix,
         for image2 in secondSet:
             if image2.number == peakId:
                 thumb2 = cv2.resize(image2.rawImage, p.THUMBSIZE)
+        for image2 in secondSet:
+            if image2.number == image1.number:
+                thumb3 = cv2.resize(image2.rawImage, p.THUMBSIZE)
 
-        thumbpair = np.concatenate((thumb1,thumb2), axis=0)
+        thumbtrio = np.concatenate((thumb1,thumb2,thumb3), axis=0)
         
         # Green box if correct, red box if incorrect
         if isCorrect[i]:
-            thumbpair = giveBorder(thumbpair, 'green')
+            thumbtrio = giveBorder(thumbtrio, 'green')
         else:
-            thumbpair = giveBorder(thumbpair, 'red')
+            thumbtrio = giveBorder(thumbtrio, 'red')
             
         # Tack on the thumbpair to the final display image
         if i ==0:
-            thumbstrip = thumbpair
+            thumbstrip = thumbtrio
         else:
-            thumbstrip = np.concatenate((thumbstrip,thumbpair), axis=1)
+            thumbstrip = np.concatenate((thumbstrip,thumbtrio), axis=1)
         i += 1
     plt.imshow(cv2.cvtColor(thumbstrip, cv2.COLOR_BGR2RGB), extent=[0.5,len(peakIds)+0.5,2,0])
-    plt.title("First set images (top) with their best matches in 2nd set (bottom)")
+    plt.title("First set images (top) with their best matches in 2nd set (middle)\n" + 
+              "and the true match (bottom)")
     cv2.imwrite("bestMatchDisplay.png", thumbstrip)
     
     # Histogram of rank of best match
