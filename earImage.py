@@ -133,7 +133,7 @@ class earImage:
         self.rawImage = edgeDetection.cannyEdges(self.rawImage)
         
         # Dilate the edgemap to allow for small perturbations
-        if p.EDGE_DILATION_RADIUS > 0:
+        if p.EDGE_DILATION_DIAMETER > 0:
             kernelsize = (int)(p.EDGE_DILATION_DIAMETER*(self.nx+self.ny)/2)
             dkernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(kernelsize,kernelsize))
             self.rawImage = cv2.dilate(self.rawImage, dkernel, iterations=1)
