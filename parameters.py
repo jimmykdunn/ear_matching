@@ -10,7 +10,7 @@
 DATA_PATH = "data"
 
 # True to read in images with the ear "donut", false to read in images without it
-DONUT = True
+DONUT = False
 
 # Number of ears to use (of 195) (use smaller numbers to make faster for debugging)
 NUM_TO_READ = 195 
@@ -22,10 +22,10 @@ SHRINK_FACTOR = 8
 BLACK_AND_WHITE = False
 
 # Run background removal algorithm (True) or not (False)
-REMOVE_BACKGROUND = False
+REMOVE_BACKGROUND = True
 
 # Use keypoints from file for registration (True) or not (False)
-USE_KEYPOINT_FILE = False
+USE_KEYPOINT_FILE = True
 
 # csv file where manual keypoints are located
 KEYPOINT_FILE = "myKeypoints.csv"
@@ -37,13 +37,13 @@ DO_TEMPLATE_ALIGN = False
 TEMPLATE_IMAGE = "customMeanStackTemplate8x.png"
 
 # Do edge detection (True) or not (False)
-DO_EDGE_DETECTION = False
+DO_EDGE_DETECTION = True
 
 # Edge threshold range
-EDGE_RANGE = [100,200]  # default [50,250]
+EDGE_RANGE = [100,200]  # default [100,200]
 
 # Edge detection dilation diameter as a fraction of the image (width+height)/2
-EDGE_DILATION_DIAMETER = 0.01
+EDGE_DILATION_DIAMETER = 0.02
 
 # Set to true to do a PCA decomposition before comparison
 DO_PCA = False 
