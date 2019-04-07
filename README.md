@@ -4,6 +4,25 @@ Dharmit Dalvi and James Dunn
 March/April 2019
 Boston University
 
+EXTERNAL DEPENDENCIES. These are REQUIRED for running the code. Make sure to download them!
+numpy
+cv2
+glob
+os
+matplotlib
+pandas
+sklearn
+copy
+Testing was done using Python 3.6.5 using the Spyder IDE on Windows 10 and iOS
+
+RUNNING THE CODE
+1. Imagery must be copied into the data folder.
+2. Run main.py from your python environment
+
+CHANGING PARAMETERS
+parameters.py contans all of the parameters that can be adjusted by the user. The default values work well for images "in the wild". If running with images with the donut device, set DONUT to True. For best results with the donut device, set USE_KEYPOINT_FILE to False, set REMOVE_BACKGROUND to False, and set EDGE_DILATION_DIAMETER to 0.01. You may change other parameters at your discretion.
+
+DESCRIPTION
 This library reads in photos of human ears and attempts to match them.  The input data is two sets of images: 1. pictures of ears taken on one day, 2. pictures of the same ears taken on another day
 
 The code reads all the images, performs preprocessing, runs a comparison algorithm to get a "similarity score" or correlation value ranging from 0 (no match) to 1 (perfect match).
