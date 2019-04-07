@@ -233,7 +233,11 @@ def removeBackground(image):
     #cv2.destroyWindow("DonutGone")
     
     # Match skin color
+    #cv2.imshow("SkinMask", image)
+    #cv2.waitKey(0)
     skinMask = skinDetect(image)
+    #cv2.imshow("SkinMask", skinMask*255)
+    #cv2.waitKey(0)
     skinMask = cleanMask(skinMask)
     #cv2.imshow("SkinMask", skinMask*255)
     #cv2.waitKey(0)

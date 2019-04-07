@@ -13,7 +13,7 @@ DATA_PATH = "data"
 DONUT = True
 
 # Number of ears to use (of 195) (use smaller numbers to make faster for debugging)
-NUM_TO_READ = 195
+NUM_TO_READ = 195 
 
 # Shrink images by this factor before doing anything. Set to 1 to do no shrinking.
 SHRINK_FACTOR = 8
@@ -37,13 +37,13 @@ DO_TEMPLATE_ALIGN = False
 TEMPLATE_IMAGE = "customMeanStackTemplate8x.png"
 
 # Do edge detection (True) or not (False)
-DO_EDGE_DETECTION = True
+DO_EDGE_DETECTION = False
 
 # Edge threshold range
 EDGE_RANGE = [100,200]  # default [50,250]
 
-# Edge detection dilation radius as a fraction of the image (width+height)/2
-EDGE_DILATION_RADIUS = 0.01
+# Edge detection dilation diameter as a fraction of the image (width+height)/2
+EDGE_DILATION_DIAMETER = 0.01
 
 # Set to true to do a PCA decomposition before comparison
 DO_PCA = False 
@@ -52,26 +52,26 @@ DO_PCA = False
 NUM_COMPONENTS = 40
 
 # Size of thumbnails for final display (pixels)
-THUMBSIZE = (63,84)
+THUMBSIZE = (126,168) #(63,84)
 
 # Display images at this size (pixels). (504,672) is 1/6 raw image size
 DISPLAY_SHAPE = (504,672) 
 
 def printParameters():
-    print("DATA_PATH:            ", DATA_PATH)
-    print("DONUT:                ", DONUT)
-    print("NUM_TO_READ:          ", NUM_TO_READ)
-    print("SHRINK_FACTOR:        ", SHRINK_FACTOR)
-    print("BLACK_AND_WHITE:      ", BLACK_AND_WHITE)
-    print("REMOVE_BACKGROUND:    ", REMOVE_BACKGROUND)
-    print("USE_KEYPOINT_FILE:    ", USE_KEYPOINT_FILE)
-    print("KEYPOINT_FILE:        ", KEYPOINT_FILE)
-    print("DO_TEMPLATE_ALIGN:    ", DO_TEMPLATE_ALIGN)
-    print("TEMPLATE_IMAGE:       ", TEMPLATE_IMAGE)
-    print("DO_EDGE_DETECTION:    ", DO_EDGE_DETECTION)
-    print("EDGE_RANGE:           ", EDGE_RANGE)
-    print("EDGE_DILATION_RADIUS: ", EDGE_DILATION_RADIUS)
-    print("DO_PCA:               ", DO_PCA)
-    print("NUM_COMPONENTS:       ", NUM_COMPONENTS)
-    print("THUMBSIZE:            ", THUMBSIZE)
-    print("DISPLAY_SHAPE:        ", DISPLAY_SHAPE)
+    print("DATA_PATH:              ", DATA_PATH)
+    print("DONUT:                  ", DONUT)
+    print("NUM_TO_READ:            ", NUM_TO_READ)
+    print("SHRINK_FACTOR:          ", SHRINK_FACTOR)
+    print("BLACK_AND_WHITE:        ", BLACK_AND_WHITE)
+    print("REMOVE_BACKGROUND:      ", REMOVE_BACKGROUND)
+    print("USE_KEYPOINT_FILE:      ", USE_KEYPOINT_FILE)
+    print("KEYPOINT_FILE:          ", KEYPOINT_FILE)
+    print("DO_TEMPLATE_ALIGN:      ", DO_TEMPLATE_ALIGN)
+    print("TEMPLATE_IMAGE:         ", TEMPLATE_IMAGE)
+    print("DO_EDGE_DETECTION:      ", DO_EDGE_DETECTION)
+    print("EDGE_RANGE:             ", EDGE_RANGE)
+    print("EDGE_DILATION_DIAMETER: ", EDGE_DILATION_DIAMETER)
+    print("DO_PCA:                 ", DO_PCA)
+    print("NUM_COMPONENTS:         ", NUM_COMPONENTS)
+    print("THUMBSIZE:              ", THUMBSIZE)
+    print("DISPLAY_SHAPE:          ", DISPLAY_SHAPE)

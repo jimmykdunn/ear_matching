@@ -235,6 +235,7 @@ def displayResults(accuracy, isCorrect, similarityMatrix,
     plt.xlabel("Rank of true match")
     plt.ylabel("Count (out of " + str(len(isCorrect)) + ")")
     plt.title("Histogram of true match rank")
+    plt.ylim((0,140))
     plt.show()
     plt.savefig('rankOfTrueMatchHistogram.png')
 

@@ -95,6 +95,10 @@ class earImage:
         if p.REMOVE_BACKGROUND:
             self.removeBackground()
         
+        #cv2.imshow("bg removed", self.rawImage)
+        #cv2.waitKey(0)
+        #cv2.destroyWindow("aligned")
+        
         # Run template alignment algorithm
         if p.DO_TEMPLATE_ALIGN:
             self.align(templates)
@@ -102,10 +106,6 @@ class earImage:
         # Run pre-existing keypoint alignment algorithm
         if p.USE_KEYPOINT_FILE:
             self.align(templates)
-        
-        #cv2.imshow("aligned", self.rawImage)
-        #cv2.waitKey(0)
-        #cv2.destroyWindow("aligned")
         
         # Make image black and white if desired
         if p.BLACK_AND_WHITE:
@@ -134,9 +134,10 @@ class earImage:
         
         # Dilate the edgemap to allow for small perturbations
         if p.EDGE_DILATION_RADIUS > 0:
-            kernelsize = (int)(p.EDGE_DILATION_RADIUS*(self.nx+self.ny)/2)
+            kernelsize = (int)(p.EDGE_DILATION_DIAMETER*(self.nx+self.ny)/2)
             dkernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(kernelsize,kernelsize))
             self.rawImage = cv2.dilate(self.rawImage, dkernel, iterations=1)
+        #print(self.nameString)
         #cv2.imshow("edges", self.rawImage)
         #cv2.waitKey(0)
         #cv2.destroyWindow("edges")
