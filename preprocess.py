@@ -2,7 +2,8 @@
 # Dharmit Dalvi and James Dunn, Spring 2019, Boston University
 # Code written for CS 640 (Artificial Intelligence) project.
 
-# Functions used in preprocessing imagery.
+# Functions used in preprocessing imagery.  Contains alignment functions and 
+# background removal functions.
 
 # External imports
 import numpy as np

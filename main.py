@@ -2,7 +2,9 @@
 # Dharmit Dalvi and James Dunn, Spring 2019, Boston University
 # Code written for CS 640 (Artificial Intelligence) project.
 
-# main() is the highest level function. Call this from your python environment.
+# main() is the highest level function and is at the bottom of this file.
+# Run this file from your python environment to execute the software.  
+# Other high-level functions are also included in this file.
 
 # External library imports
 import cv2
@@ -186,12 +188,7 @@ def displayResults(accuracy, isCorrect, similarityMatrix,
         simOfBest.append(np.amax(row))
     print("AVG SIMILARITY SCORE OF BEST MATCH: ", np.mean(simOfBest))
    
-    # Rank of true match is a way of seeing how well the "true-match" ear
-    # did in comparison to the others. If the true-match ear was correctly
-    # chosen, then the rank of the true match is 1. If the true-match ear was
-    # the 2nd best match among all the images, then the rank of the true match
-    # is 2, etc...
-    print("AVG RANK OF TRUE MATCH: ", np.mean(rankOfTruth))
+    #print("AVG RANK OF TRUE MATCH: ", np.mean(rankOfTruth))
     
     # Display an strip of thumbnails with each ear in the first set next
     # to the ear that the algorithm calculated as the best match.
@@ -226,6 +223,11 @@ def displayResults(accuracy, isCorrect, similarityMatrix,
     cv2.imwrite("bestMatchDisplay.png", thumbstrip)
     
     # Histogram of rank of best match
+    # Rank of true match is a way of seeing how well the "true-match" ear
+    # did in comparison to the others. If the true-match ear was correctly
+    # chosen, then the rank of the true match is 1. If the true-match ear was
+    # the 2nd best match among all the images, then the rank of the true match
+    # is 2, etc...
     # The more datapoints that are at or near 1, the better
     nImages = len(isCorrect)
     plt.figure() # make a new figure
@@ -243,34 +245,15 @@ def displayResults(accuracy, isCorrect, similarityMatrix,
 # Main function. Call this to run everything!!!
 def main():
     
-    # Read in all the images
+    # Read in all the images and perform preprocessing on them
     firstSet, secondSet = readImages()
     
     # Do edge detection if requested
     if p.DO_EDGE_DETECTION:
-        #meanStack = np.zeros_like(firstSet[0].rawImage).astype(float)
-        #N = float(len(firstSet) + len(secondSet))
         for i, (image1, image2) in enumerate(zip(firstSet,secondSet)):
             print("Running edge detection on image ", i, " of ", len(firstSet))
             image1.detectEdges()
             image2.detectEdges()
-            
-            # DILATE EDGES HERE???
-    
-            #dkernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(10,10))
-            #im1d = cv2.dilate(image1.rawImage, dkernel, iterations=1)
-            #im2d = cv2.dilate(image2.rawImage, dkernel, iterations=1)
-    
-            # Accumulate the mean of the images for later use
-            #meanStack += (im1d + im2d) / N
-    
-
-        # Display the average edgemap. Used to generate the tempate that
-        # is used for registration.
-        #cv2.imwrite("meanStackDonut8x.jpg", meanStack)        
-        #cv2.imshow("Mean of ears", meanStack/np.amax(meanStack))
-        #cv2.waitKey(0)
-        #cv2.destroyWindow("Mean of ears")
         
     
     # Generate an eigendecomposition for each image for use in similarity calculation

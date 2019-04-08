@@ -3,7 +3,8 @@
 # Code written for CS 640 (Artificial Intelligence) project.
 
 # Class to hold an ear image and some pertinent information about it. Also
-# includes some functions to do simple operations.
+# includes some functions to do operations on the image.  Calls functions
+# from the preprocesing.py file as needed.
 
 # External library imports
 import cv2
@@ -146,10 +147,6 @@ class earImage:
     def compare(self, other):
         # This function runs an algorithm to compare the current ear image to
         # another ear image (other).
-        
-        # Call the external image comparison algorithm.
-        # These functions are the real meat of the project.
-        # ONLY ONE should be used, the rest should be commented out.
         
         if not p.DO_PCA:
             # Option 1: simple pixel-by-pixel sum squared difference comparison

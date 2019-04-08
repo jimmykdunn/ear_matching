@@ -1,7 +1,10 @@
 #!/usr/bin/python
 # Dharmit Dalvi and James Dunn, Spring 2019, Boston University
 # Code written for CS 640 (Artificial Intelligence) project.
-
+#
+# THE FUNCTIONALITY IN THIS FILE WAS NOT USED FOR THE FINAL REPORT! KEYPOINT
+# DERIVED HOMOGRAPHY WAS USED INSTEAD OF THIS AS IT DID A SUPERIOR JOB!
+#
 # The "template" method is an attempt to implement a technique that is common 
 # in the literature, namely taking the image and matching it to a known 
 # template, to be used for registration. The same method is also commonly used 

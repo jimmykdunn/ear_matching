@@ -2,7 +2,10 @@
 # Dharmit Dalvi and James Dunn, Spring 2019, Boston University
 # Code written for CS 640 (Artificial Intelligence) project.
 
-# Manual keypoint selecton GUI and interfaces
+# Manual keypoint selecton GUI and interfaces.  This may be run by itself.
+# This code produces the myKeypoints.csv file.  It is intended to be run only
+# once to produce the keypoints in that file.  This code is not called from
+# the main() function in main.py.
 # Code based on https://www.pyimagesearch.com/2015/03/09/capturing-mouse-click-events-with-python-and-opencv/
 
 # External imports

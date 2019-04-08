@@ -5,7 +5,7 @@ import numpy as np
 import cv2
 import parameters as p
 
-# Super basic pixel-by-pixel sum-squared difference.
+# Basic pixel-by-pixel sum-squared difference, normalized and inverted.
 def compare(image1, image2):
     
     # Disallow any pixels that are exactly zero in either image from
@@ -17,8 +17,6 @@ def compare(image1, image2):
         zeropixels = zeropixels1*zeropixels2
         nonzeropixels = zeropixels == False
         zeropixels = zeropixels.astype(np.uint8)
-        #image1c = cv2.bitwise_and(image1, image1, mask=nonzeropixels)
-        #image2c = cv2.bitwise_and(image2, image2, mask=nonzeropixels)
         
         # Sum squared difference, scaled to be between zero and one
         score = 1.0 / (1.0 + np.mean( \

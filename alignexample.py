@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 #From: https://www.learnopencv.com/homography-examples-using-opencv-python-c/
+# This is a copy of the above website. Used to test the alignment algorithm
+# in its own sandbox.  This is NOT part of the main processing chain.
 import cv2
 import numpy as np
 
